@@ -41,6 +41,8 @@ Frictionless voice input: hold a key, speak, release, paste. Nothing else.
 - Target use case: quick voice input while working, paste into any app
 - Emphasis on being lightweight — shouldn't feel like it's running
 - Future expansion: multi-language support, auto-detection
+- **Brand guide**: `coxixo-brand-guides.html` — defines visual identity, colors, tray icon design, settings UI mockup
+- **Slogan**: "Fale. Solte. Cole."
 
 ## Constraints
 
