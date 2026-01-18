@@ -47,6 +47,9 @@ Recent decisions affecting current work:
 | ApplicationContext pattern | 01-01 | Formless tray app without hidden window |
 | Global mutex naming | 01-01 | `Global\CoxixoSingleInstance` for system-wide single instance |
 | Embedded icon resources | 01-01 | Icons loaded via Assembly.GetManifestResourceStream |
+| WH_KEYBOARD_LL hook | 01-02 | Low-level hook captures both keydown and keyup globally |
+| Auto-repeat prevention | 01-02 | Track `_isKeyDown` state to filter repeated events |
+| Delegate field storage | 01-02 | Prevent GC collection of callback during hook lifetime |
 | LocalApplicationData folder | 01-03 | Settings stored in %LOCALAPPDATA%\Coxixo\ (not Roaming) |
 | DPAPI with custom entropy | 01-03 | Additional protection for credential encryption |
 | Static service pattern | 01-03 | ConfigurationService and CredentialService are static classes |
