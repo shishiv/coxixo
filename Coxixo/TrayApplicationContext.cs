@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -10,6 +11,7 @@ public class TrayApplicationContext : ApplicationContext
 {
     private readonly NotifyIcon _trayIcon;
     private readonly KeyboardHookService _hotkeyService;
+    private readonly AudioCaptureService _audioCaptureService;
     private readonly Icon _idleIcon;
     private readonly Icon _recordingIcon;
     private readonly AppSettings _settings;
@@ -30,6 +32,13 @@ public class TrayApplicationContext : ApplicationContext
             Visible = true,
             ContextMenuStrip = CreateContextMenu()
         };
+
+        // Initialize audio capture service
+        _audioCaptureService = new AudioCaptureService();
+        _audioCaptureService.RecordingStarted += OnRecordingStarted;
+        _audioCaptureService.RecordingStopped += OnRecordingStopped;
+        _audioCaptureService.RecordingDiscarded += OnRecordingDiscarded;
+        _audioCaptureService.CaptureError += OnCaptureError;
 
         // Initialize and start keyboard hook with configured key
         _hotkeyService = new KeyboardHookService();
@@ -67,12 +76,45 @@ public class TrayApplicationContext : ApplicationContext
     {
         _trayIcon.Icon = _recordingIcon;
         _trayIcon.Text = "Coxixo - Recording...";
+        _audioCaptureService.StartCapture();
     }
 
     private void OnHotkeyReleased(object? sender, EventArgs e)
     {
+        var audioData = _audioCaptureService.StopCapture();
         _trayIcon.Icon = _idleIcon;
         _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+
+        if (audioData != null)
+        {
+            // Phase 3 will send this to Whisper API
+            // For now, just log the size
+            Debug.WriteLine($"Captured {audioData.Length} bytes of audio ({_audioCaptureService.LastRecordingDuration.TotalSeconds:F1}s)");
+        }
+    }
+
+    private void OnRecordingStarted(object? sender, EventArgs e)
+    {
+        Debug.WriteLine("Recording started");
+    }
+
+    private void OnRecordingStopped(object? sender, EventArgs e)
+    {
+        Debug.WriteLine("Recording stopped - audio captured");
+    }
+
+    private void OnRecordingDiscarded(object? sender, EventArgs e)
+    {
+        Debug.WriteLine("Recording too short, discarded");
+    }
+
+    private void OnCaptureError(object? sender, string message)
+    {
+        // Use NotifyIcon balloon for toast-like notification
+        _trayIcon.BalloonTipTitle = "Coxixo - Microphone Error";
+        _trayIcon.BalloonTipText = message;
+        _trayIcon.BalloonTipIcon = ToolTipIcon.Warning;
+        _trayIcon.ShowBalloonTip(5000);
     }
 
     private void OnSettingsClick(object? sender, EventArgs e)
@@ -104,6 +146,7 @@ public class TrayApplicationContext : ApplicationContext
         if (disposing)
         {
             _hotkeyService?.Dispose();
+            _audioCaptureService?.Dispose();
             CleanupTrayIcon();
             _idleIcon?.Dispose();
             _recordingIcon?.Dispose();
