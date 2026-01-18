@@ -1,25 +1,42 @@
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using Coxixo.Models;
+using Coxixo.Services;
 
 namespace Coxixo;
 
 public class TrayApplicationContext : ApplicationContext
 {
     private readonly NotifyIcon _trayIcon;
+    private readonly KeyboardHookService _hotkeyService;
+    private readonly Icon _idleIcon;
+    private readonly Icon _recordingIcon;
+    private readonly AppSettings _settings;
 
     public TrayApplicationContext()
     {
-        // Load icon from embedded resource
-        var icon = LoadEmbeddedIcon("Coxixo.Resources.icon-idle.ico");
+        // Load settings first
+        _settings = ConfigurationService.Load();
+
+        // Load icons from embedded resources
+        _idleIcon = LoadEmbeddedIcon("Coxixo.Resources.icon-idle.ico");
+        _recordingIcon = LoadEmbeddedIcon("Coxixo.Resources.icon-recording.ico");
 
         _trayIcon = new NotifyIcon
         {
-            Icon = icon,
-            Text = "Coxixo - Push to Talk",
+            Icon = _idleIcon,
+            Text = $"Coxixo - Press {_settings.HotkeyKey} to talk",
             Visible = true,
             ContextMenuStrip = CreateContextMenu()
         };
+
+        // Initialize and start keyboard hook with configured key
+        _hotkeyService = new KeyboardHookService();
+        _hotkeyService.TargetKey = _settings.HotkeyKey;
+        _hotkeyService.HotkeyPressed += OnHotkeyPressed;
+        _hotkeyService.HotkeyReleased += OnHotkeyReleased;
+        _hotkeyService.Start();
 
         Application.ApplicationExit += OnApplicationExit;
     }
@@ -44,6 +61,18 @@ public class TrayApplicationContext : ApplicationContext
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Exit", null, OnExitClick);
         return menu;
+    }
+
+    private void OnHotkeyPressed(object? sender, EventArgs e)
+    {
+        _trayIcon.Icon = _recordingIcon;
+        _trayIcon.Text = "Coxixo - Recording...";
+    }
+
+    private void OnHotkeyReleased(object? sender, EventArgs e)
+    {
+        _trayIcon.Icon = _idleIcon;
+        _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
     }
 
     private void OnSettingsClick(object? sender, EventArgs e)
@@ -74,7 +103,10 @@ public class TrayApplicationContext : ApplicationContext
     {
         if (disposing)
         {
+            _hotkeyService?.Dispose();
             CleanupTrayIcon();
+            _idleIcon?.Dispose();
+            _recordingIcon?.Dispose();
         }
         base.Dispose(disposing);
     }
