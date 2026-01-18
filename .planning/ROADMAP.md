@@ -12,7 +12,7 @@ Coxixo delivers frictionless voice-to-clipboard transcription in four phases. We
 
 - [x] **Phase 1: Foundation** - System tray app with global hotkey detection ✓
 - [x] **Phase 2: Audio Pipeline** - Microphone capture to memory buffer ✓
-- [ ] **Phase 3: Transcription Loop** - Azure API integration and clipboard output
+- [x] **Phase 3: Transcription Loop** - Azure API integration and clipboard output ✓
 - [ ] **Phase 4: Polish** - Visual identity, settings UI, and feedback refinement
 
 ## Phase Details
@@ -62,8 +62,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Azure Whisper API client with TranscriptionService and retry logic
-- [ ] 03-02-PLAN.md — Wire transcription into hotkey flow with clipboard output and error handling
+- [x] 03-01-PLAN.md — Azure Whisper API client with TranscriptionService and retry logic ✓
+- [x] 03-02-PLAN.md — Wire transcription into hotkey flow with clipboard output and error handling ✓
 
 ### Phase 4: Polish
 **Goal**: Apply brand visual identity, build settings UI, refine user experience
@@ -90,7 +90,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete ✓ | 2026-01-18 |
 | 2. Audio Pipeline | 2/2 | Complete ✓ | 2026-01-18 |
-| 3. Transcription Loop | 0/2 | Planned | - |
+| 3. Transcription Loop | 2/2 | Complete ✓ | 2026-01-18 |
 | 4. Polish | 0/2 | Not started | - |
 
 ---

@@ -10,23 +10,23 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Core Experience
 
 - [ ] **CORE-01**: User can hold a global hotkey to record audio (push-to-talk)
-- [ ] **CORE-02**: User can release the hotkey to trigger transcription
+- [x] **CORE-02**: User can release the hotkey to trigger transcription ✓
 - [ ] **CORE-03**: App runs as system tray icon with minimal footprint
 - [ ] **CORE-04**: Tray icon visually indicates recording state (see UI-02 for design)
-- [ ] **CORE-05**: Transcription result is automatically copied to clipboard
+- [x] **CORE-05**: Transcription result is automatically copied to clipboard ✓
 - [x] **CORE-06**: User hears audio feedback when recording starts/stops (beep) ✓
-- [ ] **CORE-07**: User receives error feedback if transcription fails (notification)
+- [x] **CORE-07**: User receives error feedback if transcription fails (notification) ✓
 
 ### Integration
 
 - [x] **INTG-01**: Audio is captured from default system microphone ✓
-- [ ] **INTG-02**: Audio is sent to Azure OpenAI Whisper API for transcription
+- [x] **INTG-02**: Audio is sent to Azure OpenAI Whisper API for transcription ✓
 - [ ] **INTG-03**: API credentials (endpoint, key) are securely stored
 
 ### Configuration
 
 - [ ] **CONF-01**: User can customize the push-to-talk hotkey
-- [ ] **CONF-02**: User can configure Azure API credentials (endpoint, key)
+- [x] **CONF-02**: User can configure Azure API credentials (endpoint, key) ✓
 - [ ] **CONF-03**: Settings persist across app restarts
 
 ### Visual Identity (Brand Guide)
@@ -76,17 +76,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CORE-01 | Phase 1 | Complete ✓ |
-| CORE-02 | Phase 3 | Pending |
+| CORE-02 | Phase 3 | Complete ✓ |
 | CORE-03 | Phase 1 | Complete ✓ |
 | CORE-04 | Phase 1 | Complete ✓ |
-| CORE-05 | Phase 3 | Pending |
+| CORE-05 | Phase 3 | Complete ✓ |
 | CORE-06 | Phase 2 | Complete ✓ |
-| CORE-07 | Phase 3 | Pending |
+| CORE-07 | Phase 3 | Complete ✓ |
 | INTG-01 | Phase 2 | Complete ✓ |
-| INTG-02 | Phase 3 | Pending |
+| INTG-02 | Phase 3 | Complete ✓ |
 | INTG-03 | Phase 1 | Complete ✓ |
 | CONF-01 | Phase 4 | Pending |
-| CONF-02 | Phase 3 | Pending |
+| CONF-02 | Phase 3 | Complete ✓ |
 | CONF-03 | Phase 1 | Complete ✓ |
 | UI-01 | Phase 4 | Pending |
 | UI-02 | Phase 4 | Pending |
@@ -102,4 +102,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-18 after Phase 2 completion*
+*Last updated: 2026-01-18 after Phase 3 completion*

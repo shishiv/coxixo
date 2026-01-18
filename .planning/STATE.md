@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Frictionless voice input: hold a key, speak, release, paste.
-**Current focus:** Phase 3 - Transcription Loop
+**Current focus:** Phase 4 - Polish
 
 ## Current Position
 
-Phase: 3 of 4 (Transcription Loop) - COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-01-18 - Completed 03-02-PLAN.md (Transcription Loop Wiring)
+Phase: 4 of 4 (Polish)
+Plan: 0 of 2 in current phase
+Status: Ready to plan Phase 4
+Last activity: 2026-01-18 - Phase 3 Transcription Loop verified and complete
 
 Progress: [#######...] ~58% (7 of ~12 total plans)
 
@@ -80,6 +80,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Completed 03-02-PLAN.md (Transcription Loop Wiring) - Phase 3 complete
+Stopped at: Phase 3 Transcription Loop verified complete, ready for Phase 4 Polish
 Resume file: None
-Next: Phase 4 (Settings UI)
