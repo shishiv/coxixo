@@ -27,4 +27,9 @@ public class AppSettings
     /// API version for Azure OpenAI (default matches current stable).
     /// </summary>
     public string ApiVersion { get; set; } = "2024-02-01";
+
+    /// <summary>
+    /// Whether to play audio feedback sounds when recording starts/stops.
+    /// </summary>
+    public bool AudioFeedbackEnabled { get; set; } = true;
 }
