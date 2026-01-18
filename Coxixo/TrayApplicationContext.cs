@@ -12,6 +12,7 @@ public class TrayApplicationContext : ApplicationContext
     private readonly NotifyIcon _trayIcon;
     private readonly KeyboardHookService _hotkeyService;
     private readonly AudioCaptureService _audioCaptureService;
+    private readonly AudioFeedbackService _audioFeedbackService;
     private readonly Icon _idleIcon;
     private readonly Icon _recordingIcon;
     private readonly AppSettings _settings;
@@ -32,6 +33,10 @@ public class TrayApplicationContext : ApplicationContext
             Visible = true,
             ContextMenuStrip = CreateContextMenu()
         };
+
+        // Initialize audio feedback service
+        _audioFeedbackService = new AudioFeedbackService();
+        _audioFeedbackService.Enabled = _settings.AudioFeedbackEnabled;
 
         // Initialize audio capture service
         _audioCaptureService = new AudioCaptureService();
@@ -96,16 +101,19 @@ public class TrayApplicationContext : ApplicationContext
     private void OnRecordingStarted(object? sender, EventArgs e)
     {
         Debug.WriteLine("Recording started");
+        _audioFeedbackService.PlayStartBeep();
     }
 
     private void OnRecordingStopped(object? sender, EventArgs e)
     {
         Debug.WriteLine("Recording stopped - audio captured");
+        _audioFeedbackService.PlayStopBeep();
     }
 
     private void OnRecordingDiscarded(object? sender, EventArgs e)
     {
-        Debug.WriteLine("Recording too short, discarded");
+        // No beep on RecordingDiscarded - silent discard keeps it non-intrusive
+        Debug.WriteLine("Recording too short, discarded (no beep)");
     }
 
     private void OnCaptureError(object? sender, string message)
@@ -147,6 +155,7 @@ public class TrayApplicationContext : ApplicationContext
         {
             _hotkeyService?.Dispose();
             _audioCaptureService?.Dispose();
+            _audioFeedbackService?.Dispose();
             CleanupTrayIcon();
             _idleIcon?.Dispose();
             _recordingIcon?.Dispose();
