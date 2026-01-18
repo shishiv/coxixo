@@ -10,7 +10,7 @@ Coxixo delivers frictionless voice-to-clipboard transcription in four phases. We
 - Integer phases (1, 2, 3, 4): Planned milestone work
 - Decimal phases (e.g., 2.1): Urgent insertions (marked INSERTED)
 
-- [ ] **Phase 1: Foundation** - System tray app with global hotkey detection
+- [x] **Phase 1: Foundation** - System tray app with global hotkey detection ✓
 - [ ] **Phase 2: Audio Pipeline** - Microphone capture to memory buffer
 - [ ] **Phase 3: Transcription Loop** - Azure API integration and clipboard output
 - [ ] **Phase 4: Polish** - Visual identity, settings UI, and feedback refinement
@@ -30,9 +30,9 @@ Coxixo delivers frictionless voice-to-clipboard transcription in four phases. We
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Create .NET 8 WinForms project with system tray shell using ApplicationContext pattern
-- [ ] 01-02-PLAN.md — Implement global hotkey detection with low-level keyboard hook for push-to-talk
-- [ ] 01-03-PLAN.md — Add configuration persistence (JSON settings) and secure credential storage (DPAPI)
+- [x] 01-01-PLAN.md — Create .NET 8 WinForms project with system tray shell using ApplicationContext pattern ✓
+- [x] 01-02-PLAN.md — Implement global hotkey detection with low-level keyboard hook for push-to-talk ✓
+- [x] 01-03-PLAN.md — Add configuration persistence (JSON settings) and secure credential storage (DPAPI) ✓
 
 ### Phase 2: Audio Pipeline
 **Goal**: Capture audio from default microphone into a memory buffer during push-to-talk
@@ -88,7 +88,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Planned | - |
+| 1. Foundation | 3/3 | Complete ✓ | 2026-01-18 |
 | 2. Audio Pipeline | 0/2 | Not started | - |
 | 3. Transcription Loop | 0/2 | Not started | - |
 | 4. Polish | 0/2 | Not started | - |
