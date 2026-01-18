@@ -59,11 +59,11 @@ Plans:
   3. User can paste transcribed text into any application
   4. User receives notification if transcription fails (API error, timeout, etc.)
   5. API credentials are configurable and securely stored
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Azure Whisper API client
-- [ ] 03-02: Clipboard integration and error handling
+- [ ] 03-01-PLAN.md — Azure Whisper API client with TranscriptionService and retry logic
+- [ ] 03-02-PLAN.md — Wire transcription into hotkey flow with clipboard output and error handling
 
 ### Phase 4: Polish
 **Goal**: Apply brand visual identity, build settings UI, refine user experience
@@ -90,7 +90,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete ✓ | 2026-01-18 |
 | 2. Audio Pipeline | 2/2 | Complete ✓ | 2026-01-18 |
-| 3. Transcription Loop | 0/2 | Not started | - |
+| 3. Transcription Loop | 0/2 | Planned | - |
 | 4. Polish | 0/2 | Not started | - |
 
 ---
