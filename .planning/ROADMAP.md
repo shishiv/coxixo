@@ -43,11 +43,11 @@ Plans:
   2. Audio is encoded in format suitable for Whisper API (16kHz mono WAV)
   3. User hears beep when recording starts and stops
   4. App handles microphone permission denied gracefully
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: NAudio microphone capture
-- [ ] 02-02: Audio feedback (beeps)
+- [ ] 02-01-PLAN.md — NAudio microphone capture with 16kHz mono WAV encoding and minimum duration threshold
+- [ ] 02-02-PLAN.md — Audio feedback beeps (walkie-talkie chirps) for recording start/stop
 
 ### Phase 3: Transcription Loop
 **Goal**: Complete the core value loop - send audio to Azure, receive transcription, copy to clipboard
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete ✓ | 2026-01-18 |
-| 2. Audio Pipeline | 0/2 | Not started | - |
+| 2. Audio Pipeline | 0/2 | Planned | - |
 | 3. Transcription Loop | 0/2 | Not started | - |
 | 4. Polish | 0/2 | Not started | - |
 
