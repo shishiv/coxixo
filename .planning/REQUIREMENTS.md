@@ -14,12 +14,12 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CORE-03**: App runs as system tray icon with minimal footprint
 - [ ] **CORE-04**: Tray icon visually indicates recording state (see UI-02 for design)
 - [ ] **CORE-05**: Transcription result is automatically copied to clipboard
-- [ ] **CORE-06**: User hears audio feedback when recording starts/stops (beep)
+- [x] **CORE-06**: User hears audio feedback when recording starts/stops (beep) ✓
 - [ ] **CORE-07**: User receives error feedback if transcription fails (notification)
 
 ### Integration
 
-- [ ] **INTG-01**: Audio is captured from default system microphone
+- [x] **INTG-01**: Audio is captured from default system microphone ✓
 - [ ] **INTG-02**: Audio is sent to Azure OpenAI Whisper API for transcription
 - [ ] **INTG-03**: API credentials (endpoint, key) are securely stored
 
@@ -80,9 +80,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORE-03 | Phase 1 | Complete ✓ |
 | CORE-04 | Phase 1 | Complete ✓ |
 | CORE-05 | Phase 3 | Pending |
-| CORE-06 | Phase 2 | Pending |
+| CORE-06 | Phase 2 | Complete ✓ |
 | CORE-07 | Phase 3 | Pending |
-| INTG-01 | Phase 2 | Pending |
+| INTG-01 | Phase 2 | Complete ✓ |
 | INTG-02 | Phase 3 | Pending |
 | INTG-03 | Phase 1 | Complete ✓ |
 | CONF-01 | Phase 4 | Pending |
@@ -102,4 +102,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-18 after Phase 1 completion*
+*Last updated: 2026-01-18 after Phase 2 completion*
