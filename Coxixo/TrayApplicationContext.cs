@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using Azure;
 using Coxixo.Models;
 using Coxixo.Services;
 
@@ -16,6 +17,7 @@ public class TrayApplicationContext : ApplicationContext
     private readonly Icon _idleIcon;
     private readonly Icon _recordingIcon;
     private readonly AppSettings _settings;
+    private TranscriptionService? _transcriptionService;
 
     public TrayApplicationContext()
     {
@@ -37,6 +39,9 @@ public class TrayApplicationContext : ApplicationContext
         // Initialize audio feedback service
         _audioFeedbackService = new AudioFeedbackService();
         _audioFeedbackService.Enabled = _settings.AudioFeedbackEnabled;
+
+        // Initialize transcription service (if credentials available)
+        TryInitializeTranscriptionService();
 
         // Initialize audio capture service
         _audioCaptureService = new AudioCaptureService();
@@ -84,18 +89,91 @@ public class TrayApplicationContext : ApplicationContext
         _audioCaptureService.StartCapture();
     }
 
-    private void OnHotkeyReleased(object? sender, EventArgs e)
+    private async void OnHotkeyReleased(object? sender, EventArgs e)
     {
         var audioData = _audioCaptureService.StopCapture();
         _trayIcon.Icon = _idleIcon;
-        _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
 
-        if (audioData != null)
+        if (audioData == null)
         {
-            // Phase 3 will send this to Whisper API
-            // For now, just log the size
-            Debug.WriteLine($"Captured {audioData.Length} bytes of audio ({_audioCaptureService.LastRecordingDuration.TotalSeconds:F1}s)");
+            _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+            return;
         }
+
+        Debug.WriteLine($"Captured {audioData.Length} bytes of audio ({_audioCaptureService.LastRecordingDuration.TotalSeconds:F1}s)");
+
+        // Check if transcription service is available
+        if (_transcriptionService == null)
+        {
+            ShowNotification("Configure API credentials in Settings", ToolTipIcon.Warning);
+            _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+            return;
+        }
+
+        _trayIcon.Text = "Coxixo - Transcribing...";
+
+        try
+        {
+            var text = await _transcriptionService.TranscribeWithRetryAsync(audioData);
+
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                Clipboard.SetText(text);
+                Debug.WriteLine($"Transcription copied to clipboard: {text}");
+            }
+            else
+            {
+                ShowNotification("No speech detected", ToolTipIcon.Info);
+            }
+        }
+        catch (RequestFailedException ex)
+        {
+            var message = ex.Status switch
+            {
+                401 => "Invalid API credentials. Check Settings.",
+                403 => "Access denied. Check API permissions.",
+                404 => "Whisper deployment not found. Check deployment name.",
+                429 => "Rate limit exceeded. Try again later.",
+                >= 500 => "Azure service error. Try again.",
+                _ => $"API error: {ex.Message}"
+            };
+            ShowNotification(message, ToolTipIcon.Error);
+            Debug.WriteLine($"Transcription failed: {ex.Status} - {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            ShowNotification($"Transcription failed: {ex.Message}", ToolTipIcon.Error);
+            Debug.WriteLine($"Transcription error: {ex}");
+        }
+        finally
+        {
+            _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+        }
+    }
+
+    private bool TryInitializeTranscriptionService()
+    {
+        var apiKey = CredentialService.LoadApiKey();
+        if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(_settings.AzureEndpoint))
+        {
+            _transcriptionService = null;
+            return false;
+        }
+
+        _transcriptionService?.Dispose();
+        _transcriptionService = new TranscriptionService(
+            _settings.AzureEndpoint,
+            apiKey,
+            _settings.WhisperDeployment);
+        return true;
+    }
+
+    private void ShowNotification(string message, ToolTipIcon icon = ToolTipIcon.Warning)
+    {
+        _trayIcon.BalloonTipTitle = "Coxixo";
+        _trayIcon.BalloonTipText = message;
+        _trayIcon.BalloonTipIcon = icon;
+        _trayIcon.ShowBalloonTip(3000);
     }
 
     private void OnRecordingStarted(object? sender, EventArgs e)
@@ -156,6 +234,7 @@ public class TrayApplicationContext : ApplicationContext
             _hotkeyService?.Dispose();
             _audioCaptureService?.Dispose();
             _audioFeedbackService?.Dispose();
+            _transcriptionService?.Dispose();
             CleanupTrayIcon();
             _idleIcon?.Dispose();
             _recordingIcon?.Dispose();
