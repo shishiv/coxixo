@@ -27,12 +27,12 @@ Coxixo delivers frictionless voice-to-clipboard transcription in four phases. We
   3. User can hold a key and the tray icon changes to indicate "recording" state
   4. User can release the key and the icon returns to idle state
   5. App correctly disposes tray icon on exit (no ghost icons)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Project scaffolding and tray shell
-- [ ] 01-02: Global hotkey detection (push-to-talk)
-- [ ] 01-03: Configuration persistence
+- [ ] 01-01-PLAN.md — Create .NET 8 WinForms project with system tray shell using ApplicationContext pattern
+- [ ] 01-02-PLAN.md — Implement global hotkey detection with low-level keyboard hook for push-to-talk
+- [ ] 01-03-PLAN.md — Add configuration persistence (JSON settings) and secure credential storage (DPAPI)
 
 ### Phase 2: Audio Pipeline
 **Goal**: Capture audio from default microphone into a memory buffer during push-to-talk
@@ -88,7 +88,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 0/3 | Planned | - |
 | 2. Audio Pipeline | 0/2 | Not started | - |
 | 3. Transcription Loop | 0/2 | Not started | - |
 | 4. Polish | 0/2 | Not started | - |
