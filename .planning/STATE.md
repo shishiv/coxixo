@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 2 of 4 (Audio Pipeline)
-Plan: 1 of 2 in current phase
-Status: Plan 02-01 complete, ready for 02-02
-Last activity: 2026-01-18 - Completed 02-01-PLAN.md (NAudio microphone capture)
+Plan: 2 of 2 in current phase
+Status: Phase 02 complete, ready for Phase 03
+Last activity: 2026-01-18 - Completed 02-02-PLAN.md (audio feedback beeps)
 
-Progress: [####......] ~33% (4 of ~12 total plans)
+Progress: [#####.....] ~42% (5 of ~12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: ~6.25 min
-- Total execution time: ~25 min
+- Total plans completed: 5
+- Average duration: ~6 min
+- Total execution time: ~30 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 3 | ~17 min | ~6 min |
-| 02-audio-pipeline | 1 | ~8 min | ~8 min |
+| 02-audio-pipeline | 2 | ~13 min | ~6.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (~5 min), 01-02 (~6 min), 01-03 (~6 min), 02-01 (~8 min)
+- Last 5 plans: 01-02 (~6 min), 01-03 (~6 min), 02-01 (~8 min), 02-02 (~5 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -58,6 +58,9 @@ Recent decisions affecting current work:
 | 16kHz mono WAV format | 02-01 | Whisper API optimal format - reduces bandwidth |
 | 500ms minimum duration | 02-01 | Filters accidental taps without noticeable delay |
 | BalloonTip for errors | 02-01 | No extra dependencies needed for basic notifications |
+| Programmatic WAV generation | 02-02 | Precise frequency sweeps without external audio files |
+| Ascending/descending chirps | 02-02 | Classic walkie-talkie style: 800->1200 Hz start, 1200->800 Hz stop |
+| Silent discard for short recordings | 02-02 | No stop beep on discarded recordings keeps UX non-intrusive |
 
 ### Pending Todos
 
@@ -70,5 +73,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Completed 02-01-PLAN.md, ready for 02-02-PLAN.md (audio feedback)
+Stopped at: Completed 02-02-PLAN.md (Phase 02 complete), ready for Phase 03 (Whisper API)
 Resume file: None
