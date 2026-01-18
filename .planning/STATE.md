@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 
 ## Current Position
 
-Phase: 3 of 4 (Transcription Loop)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-18 - Completed 03-01-PLAN.md (Whisper Service)
+Phase: 3 of 4 (Transcription Loop) - COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-18 - Completed 03-02-PLAN.md (Transcription Loop Wiring)
 
-Progress: [######....] ~50% (6 of ~12 total plans)
+Progress: [#######...] ~58% (7 of ~12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~5.5 min
-- Total execution time: ~33 min
+- Total plans completed: 7
+- Average duration: ~5.3 min
+- Total execution time: ~37 min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [######....] ~50% (6 of ~12 total plans)
 |-------|-------|-------|----------|
 | 01-foundation | 3 | ~17 min | ~6 min |
 | 02-audio-pipeline | 2 | ~13 min | ~6.5 min |
-| 03-transcription-loop | 1 | ~3 min | ~3 min |
+| 03-transcription-loop | 2 | ~7 min | ~3.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (~6 min), 02-01 (~8 min), 02-02 (~5 min), 03-01 (~3 min)
-- Trend: improving (simple task)
+- Last 5 plans: 02-01 (~8 min), 02-02 (~5 min), 03-01 (~3 min), 03-02 (~4 min)
+- Trend: fast (simple wiring tasks)
 
 *Updated after each plan completion*
 
@@ -65,6 +65,9 @@ Recent decisions affecting current work:
 | Instance service pattern | 03-01 | TranscriptionService holds SDK clients needing disposal |
 | Portuguese language hardcoded | 03-01 | Primary use case per PROJECT.md is Portuguese dictation |
 | Retry transient errors only | 03-01 | 5xx/429/408 are transient; 4xx won't resolve on retry |
+| Lazy TranscriptionService init | 03-02 | Only created when credentials and endpoint are valid |
+| Status-specific error messages | 03-02 | Map HTTP codes to user-friendly messages (401, 403, 404, 429, 5xx) |
+| Clipboard.SetText on UI thread | 03-02 | Async continuation runs on UI SynchronizationContext |
 
 ### Pending Todos
 
@@ -77,5 +80,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Completed 03-01-PLAN.md (Whisper Service)
+Stopped at: Completed 03-02-PLAN.md (Transcription Loop Wiring) - Phase 3 complete
 Resume file: None
+Next: Phase 4 (Settings UI)
