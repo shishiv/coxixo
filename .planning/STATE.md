@@ -10,27 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 2 of 4 (Audio Pipeline)
-Plan: 0 of 2 in current phase
-Status: Ready to plan Phase 2
-Last activity: 2026-01-18 - Phase 1 Foundation verified and complete
+Plan: 1 of 2 in current phase
+Status: Plan 02-01 complete, ready for 02-02
+Last activity: 2026-01-18 - Completed 02-01-PLAN.md (NAudio microphone capture)
 
-Progress: [###.......] ~25% (3 of ~12 total plans)
+Progress: [####......] ~33% (4 of ~12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: ~6 min
-- Total execution time: ~17 min
+- Total plans completed: 4
+- Average duration: ~6.25 min
+- Total execution time: ~25 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 3 | ~17 min | ~6 min |
+| 02-audio-pipeline | 1 | ~8 min | ~8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (~5 min), 01-02 (~6 min), 01-03 (~6 min)
+- Last 5 plans: 01-01 (~5 min), 01-02 (~6 min), 01-03 (~6 min), 02-01 (~8 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -53,6 +54,10 @@ Recent decisions affecting current work:
 | LocalApplicationData folder | 01-03 | Settings stored in %LOCALAPPDATA%\Coxixo\ (not Roaming) |
 | DPAPI with custom entropy | 01-03 | Additional protection for credential encryption |
 | Static service pattern | 01-03 | ConfigurationService and CredentialService are static classes |
+| WaveInEvent over WaveIn | 02-01 | Better for background apps - handles own message loop |
+| 16kHz mono WAV format | 02-01 | Whisper API optimal format - reduces bandwidth |
+| 500ms minimum duration | 02-01 | Filters accidental taps without noticeable delay |
+| BalloonTip for errors | 02-01 | No extra dependencies needed for basic notifications |
 
 ### Pending Todos
 
@@ -65,5 +70,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Phase 1 Foundation verified complete, ready for Phase 2 Audio Pipeline
+Stopped at: Completed 02-01-PLAN.md, ready for 02-02-PLAN.md (audio feedback)
 Resume file: None
