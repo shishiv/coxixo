@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 3 of 4 (Transcription Loop)
-Plan: 0 of 2 in current phase
-Status: Ready to plan Phase 3
-Last activity: 2026-01-18 - Phase 2 Audio Pipeline verified and complete
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-18 - Completed 03-01-PLAN.md (Whisper Service)
 
-Progress: [#####.....] ~42% (5 of ~12 total plans)
+Progress: [######....] ~50% (6 of ~12 total plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~6 min
-- Total execution time: ~30 min
+- Total plans completed: 6
+- Average duration: ~5.5 min
+- Total execution time: ~33 min
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [#####.....] ~42% (5 of ~12 total plans)
 |-------|-------|-------|----------|
 | 01-foundation | 3 | ~17 min | ~6 min |
 | 02-audio-pipeline | 2 | ~13 min | ~6.5 min |
+| 03-transcription-loop | 1 | ~3 min | ~3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (~6 min), 01-03 (~6 min), 02-01 (~8 min), 02-02 (~5 min)
-- Trend: stable
+- Last 5 plans: 01-03 (~6 min), 02-01 (~8 min), 02-02 (~5 min), 03-01 (~3 min)
+- Trend: improving (simple task)
 
 *Updated after each plan completion*
 
@@ -61,6 +62,9 @@ Recent decisions affecting current work:
 | Programmatic WAV generation | 02-02 | Precise frequency sweeps without external audio files |
 | Ascending/descending chirps | 02-02 | Classic walkie-talkie style: 800->1200 Hz start, 1200->800 Hz stop |
 | Silent discard for short recordings | 02-02 | No stop beep on discarded recordings keeps UX non-intrusive |
+| Instance service pattern | 03-01 | TranscriptionService holds SDK clients needing disposal |
+| Portuguese language hardcoded | 03-01 | Primary use case per PROJECT.md is Portuguese dictation |
+| Retry transient errors only | 03-01 | 5xx/429/408 are transient; 4xx won't resolve on retry |
 
 ### Pending Todos
 
@@ -73,5 +77,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Phase 2 Audio Pipeline verified complete, ready for Phase 3 Transcription Loop
+Stopped at: Completed 03-01-PLAN.md (Whisper Service)
 Resume file: None
