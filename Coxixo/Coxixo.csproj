@@ -7,11 +7,13 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Resources\icon-idle.ico</ApplicationIcon>
+    <StartupObject>Coxixo.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\icon-idle.ico" />
     <EmbeddedResource Include="Resources\icon-recording.ico" />
+    <EmbeddedResource Include="Resources\icon-recording-pulse.ico" />
     <EmbeddedResource Include="Resources\beep-start.wav" />
     <EmbeddedResource Include="Resources\beep-stop.wav" />
   </ItemGroup>
