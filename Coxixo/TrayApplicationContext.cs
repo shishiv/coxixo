@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using Azure;
+using Coxixo.Forms;
 using Coxixo.Models;
 using Coxixo.Services;
 
@@ -16,7 +17,7 @@ public class TrayApplicationContext : ApplicationContext
     private readonly AudioFeedbackService _audioFeedbackService;
     private readonly Icon _idleIcon;
     private readonly Icon _recordingIcon;
-    private readonly AppSettings _settings;
+    private AppSettings _settings;
     private TranscriptionService? _transcriptionService;
 
     public TrayApplicationContext()
@@ -205,9 +206,36 @@ public class TrayApplicationContext : ApplicationContext
 
     private void OnSettingsClick(object? sender, EventArgs e)
     {
-        // Placeholder - will show settings in Phase 4
-        MessageBox.Show("Settings coming soon", "Coxixo",
-            MessageBoxButtons.OK, MessageBoxIcon.Information);
+        using var settingsForm = new SettingsForm();
+
+        // Temporarily unhook keyboard while settings is open
+        // (so user can change hotkey without triggering recording)
+        _hotkeyService.Stop();
+
+        try
+        {
+            settingsForm.ShowDialog();
+
+            if (settingsForm.DialogResult == DialogResult.OK)
+            {
+                // Reload settings
+                _settings = ConfigurationService.Load();
+
+                // Update hotkey
+                _hotkeyService.TargetKey = _settings.HotkeyKey;
+
+                // Update tooltip
+                _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+
+                // Reinitialize transcription service with new credentials
+                TryInitializeTranscriptionService();
+            }
+        }
+        finally
+        {
+            // Re-enable keyboard hook
+            _hotkeyService.Start();
+        }
     }
 
     private void OnExitClick(object? sender, EventArgs e)
