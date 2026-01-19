@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Core Experience
 
-- [ ] **CORE-01**: User can hold a global hotkey to record audio (push-to-talk)
+- [x] **CORE-01**: User can hold a global hotkey to record audio (push-to-talk) ✓
 - [x] **CORE-02**: User can release the hotkey to trigger transcription ✓
-- [ ] **CORE-03**: App runs as system tray icon with minimal footprint
-- [ ] **CORE-04**: Tray icon visually indicates recording state (see UI-02 for design)
+- [x] **CORE-03**: App runs as system tray icon with minimal footprint ✓
+- [x] **CORE-04**: Tray icon visually indicates recording state (see UI-02 for design) ✓
 - [x] **CORE-05**: Transcription result is automatically copied to clipboard ✓
 - [x] **CORE-06**: User hears audio feedback when recording starts/stops (beep) ✓
 - [x] **CORE-07**: User receives error feedback if transcription fails (notification) ✓
@@ -21,22 +21,22 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **INTG-01**: Audio is captured from default system microphone ✓
 - [x] **INTG-02**: Audio is sent to Azure OpenAI Whisper API for transcription ✓
-- [ ] **INTG-03**: API credentials (endpoint, key) are securely stored
+- [x] **INTG-03**: API credentials (endpoint, key) are securely stored ✓
 
 ### Configuration
 
-- [ ] **CONF-01**: User can customize the push-to-talk hotkey
+- [x] **CONF-01**: User can customize the push-to-talk hotkey ✓
 - [x] **CONF-02**: User can configure Azure API credentials (endpoint, key) ✓
-- [ ] **CONF-03**: Settings persist across app restarts
+- [x] **CONF-03**: Settings persist across app restarts ✓
 
 ### Visual Identity (Brand Guide)
 
-- [ ] **UI-01**: Tray icon uses sound bar design (3 bars forming "C" shape)
-- [ ] **UI-02**: Tray icon is white/gray when idle, red with pulsing dot when recording
-- [ ] **UI-03**: Settings window follows dark theme (bg #1E1E1E, surface #252526)
-- [ ] **UI-04**: Settings window shows API connection status with latency indicator
-- [ ] **UI-05**: Color palette: Azure Blue #0078D4, Accent Green #00CC6A
-- [ ] **UI-06**: Typography: Segoe UI (system font)
+- [x] **UI-01**: Tray icon uses sound bar design (3 bars forming "C" shape) ✓
+- [x] **UI-02**: Tray icon is white/gray when idle, red with pulsing dot when recording ✓
+- [x] **UI-03**: Settings window follows dark theme (bg #1E1E1E, surface #252526) ✓
+- [x] **UI-04**: Settings window shows API connection status with latency indicator ✓
+- [x] **UI-05**: Color palette: Azure Blue #0078D4, Accent Green #00CC6A ✓
+- [x] **UI-06**: Typography: Segoe UI (system font) ✓
 
 ## v2 Requirements
 
@@ -85,15 +85,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INTG-01 | Phase 2 | Complete ✓ |
 | INTG-02 | Phase 3 | Complete ✓ |
 | INTG-03 | Phase 1 | Complete ✓ |
-| CONF-01 | Phase 4 | Pending |
+| CONF-01 | Phase 4 | Complete ✓ |
 | CONF-02 | Phase 3 | Complete ✓ |
 | CONF-03 | Phase 1 | Complete ✓ |
-| UI-01 | Phase 4 | Pending |
-| UI-02 | Phase 4 | Pending |
-| UI-03 | Phase 4 | Pending |
-| UI-04 | Phase 4 | Pending |
-| UI-05 | Phase 4 | Pending |
-| UI-06 | Phase 4 | Pending |
+| UI-01 | Phase 4 | Complete ✓ |
+| UI-02 | Phase 4 | Complete ✓ |
+| UI-03 | Phase 4 | Complete ✓ |
+| UI-04 | Phase 4 | Complete ✓ |
+| UI-05 | Phase 4 | Complete ✓ |
+| UI-06 | Phase 4 | Complete ✓ |
 
 **Coverage:**
 - v1 requirements: 19 total
@@ -102,4 +102,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-18 after Phase 3 completion*
+*Last updated: 2026-01-18 after Phase 4 completion - All v1 requirements complete*
