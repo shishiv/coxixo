@@ -75,11 +75,11 @@ Plans:
   3. Settings window allows hotkey customization
   4. Settings window shows API connection status with latency indicator
   5. UI follows dark theme with specified color palette (bg #1E1E1E, Azure Blue #0078D4)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Brand visual identity (tray icons)
-- [ ] 04-02: Settings UI
+- [ ] 04-01-PLAN.md — Brand visual identity (tray icons with animation)
+- [ ] 04-02-PLAN.md — Settings UI with dark theme and hotkey customization
 
 ## Progress
 
@@ -91,7 +91,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation | 3/3 | Complete ✓ | 2026-01-18 |
 | 2. Audio Pipeline | 2/2 | Complete ✓ | 2026-01-18 |
 | 3. Transcription Loop | 2/2 | Complete ✓ | 2026-01-18 |
-| 4. Polish | 0/2 | Not started | - |
+| 4. Polish | 0/2 | Planned | - |
 
 ---
 *Roadmap created: 2026-01-17*
