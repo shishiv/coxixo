@@ -69,6 +69,9 @@ Recent decisions affecting current work:
 | Lazy TranscriptionService init | 03-02 | Only created when credentials and endpoint are valid |
 | Status-specific error messages | 03-02 | Map HTTP codes to user-friendly messages (401, 403, 404, 429, 5xx) |
 | Clipboard.SetText on UI thread | 03-02 | Async continuation runs on UI SynchronizationContext |
+| Gray (#C8C8C8) for idle icon | 04-01 | Better visibility on both light and dark taskbars than pure white |
+| 500ms animation interval | 04-01 | Fast enough to notice, slow enough to avoid CPU churn |
+| Dot position: bottom-right idle, top-right recording | 04-01 | Visual distinction between states |
 | Focus-based hotkey capture | 04-02 | Click field to enter capture mode, press key to set |
 | ProcessCmdKey override | 04-02 | Capture Tab, F-keys, and other command keys for hotkey |
 | Keyboard hook pause during settings | 04-02 | Prevents triggering while typing in settings |
