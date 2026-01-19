@@ -17,8 +17,14 @@ public class TrayApplicationContext : ApplicationContext
     private readonly AudioFeedbackService _audioFeedbackService;
     private readonly Icon _idleIcon;
     private readonly Icon _recordingIcon;
+    private readonly Icon _recordingPulseIcon;
     private AppSettings _settings;
     private TranscriptionService? _transcriptionService;
+
+    // Animation state for recording indicator
+    private System.Windows.Forms.Timer? _animationTimer;
+    private Icon[] _recordingFrames = null!;
+    private int _currentFrame = 0;
 
     public TrayApplicationContext()
     {
@@ -28,6 +34,10 @@ public class TrayApplicationContext : ApplicationContext
         // Load icons from embedded resources
         _idleIcon = LoadEmbeddedIcon("Coxixo.Resources.icon-idle.ico");
         _recordingIcon = LoadEmbeddedIcon("Coxixo.Resources.icon-recording.ico");
+        _recordingPulseIcon = LoadEmbeddedIcon("Coxixo.Resources.icon-recording-pulse.ico");
+
+        // Initialize recording animation frames
+        _recordingFrames = new[] { _recordingIcon, _recordingPulseIcon };
 
         _trayIcon = new NotifyIcon
         {
@@ -85,7 +95,7 @@ public class TrayApplicationContext : ApplicationContext
 
     private void OnHotkeyPressed(object? sender, EventArgs e)
     {
-        _trayIcon.Icon = _recordingIcon;
+        StartRecordingAnimation();
         _trayIcon.Text = "Coxixo - Recording...";
         _audioCaptureService.StartCapture();
     }
@@ -93,7 +103,7 @@ public class TrayApplicationContext : ApplicationContext
     private async void OnHotkeyReleased(object? sender, EventArgs e)
     {
         var audioData = _audioCaptureService.StopCapture();
-        _trayIcon.Icon = _idleIcon;
+        StopRecordingAnimation();
 
         if (audioData == null)
         {
@@ -177,6 +187,36 @@ public class TrayApplicationContext : ApplicationContext
         _trayIcon.ShowBalloonTip(3000);
     }
 
+    #region Recording Animation
+
+    private void StartRecordingAnimation()
+    {
+        _currentFrame = 0;
+        _trayIcon.Icon = _recordingFrames[0];
+
+        _animationTimer = new System.Windows.Forms.Timer();
+        _animationTimer.Interval = 500; // 500ms pulse for visible animation
+        _animationTimer.Tick += OnAnimationTick;
+        _animationTimer.Start();
+    }
+
+    private void OnAnimationTick(object? sender, EventArgs e)
+    {
+        _currentFrame = (_currentFrame + 1) % _recordingFrames.Length;
+        _trayIcon.Icon = _recordingFrames[_currentFrame];
+    }
+
+    private void StopRecordingAnimation()
+    {
+        _animationTimer?.Stop();
+        _animationTimer?.Dispose();
+        _animationTimer = null;
+        _currentFrame = 0;
+        _trayIcon.Icon = _idleIcon;
+    }
+
+    #endregion
+
     private void OnRecordingStarted(object? sender, EventArgs e)
     {
         Debug.WriteLine("Recording started");
@@ -259,6 +299,8 @@ public class TrayApplicationContext : ApplicationContext
     {
         if (disposing)
         {
+            _animationTimer?.Stop();
+            _animationTimer?.Dispose();
             _hotkeyService?.Dispose();
             _audioCaptureService?.Dispose();
             _audioFeedbackService?.Dispose();
@@ -266,6 +308,7 @@ public class TrayApplicationContext : ApplicationContext
             CleanupTrayIcon();
             _idleIcon?.Dispose();
             _recordingIcon?.Dispose();
+            _recordingPulseIcon?.Dispose();
         }
         base.Dispose(disposing);
     }
