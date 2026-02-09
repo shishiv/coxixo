@@ -1,470 +1,507 @@
-# Stack Research
+# Stack Research - v1.1 Feature Additions
 
 **Project:** Coxixo - Windows voice-to-clipboard transcription
-**Researched:** 2026-01-17
-**Mode:** Ecosystem research with emphasis on lightweight/low memory
+**Milestone:** v1.1 - Hotkey modifiers, microphone selection, language selection, Windows startup
+**Researched:** 2026-02-09
+**Mode:** Incremental feature additions to validated v1.0 stack
 
 ---
 
 ## Executive Summary
 
-For a lightweight Windows system tray app with audio capture and cloud API integration, **C# with .NET 8 Windows Forms** is the recommended stack. It provides the smallest memory footprint, fastest startup, native Windows integration, and mature audio/hotkey libraries — all without bundling a browser engine.
+v1.1 requires **zero new dependencies**. All new features (hotkey modifiers, microphone enumeration, language selection, Windows startup) are achievable with the existing .NET 8 + NAudio 2.2.1 + Azure.AI.OpenAI 2.1.0 stack, using built-in Windows APIs and configuration adjustments.
 
-**Key finding:** Electron (200-400MB RAM) and even Tauri (30-40MB RAM) are overkill for this use case. A native .NET Windows Forms app can run with 10-20MB RAM when idle, with instant startup via Native AOT compilation.
+**Key finding:** The existing WH_KEYBOARD_LL hook already captures modifier states. NAudio's MMDeviceEnumerator handles microphone enumeration. Azure OpenAI Whisper accepts ISO-639-1 language codes. Windows startup uses registry Run key or Task Scheduler — both accessible via built-in .NET APIs.
 
----
-
-## Recommended Stack
-
-### Core Framework
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| C# / .NET | 8.0 or 9.0 | Runtime & language | Native Windows support, AOT compilation, mature ecosystem |
-| Windows Forms | Built-in (.NET 8+) | System tray & minimal UI | Lightest weight UI framework, NotifyIcon built-in |
-
-### Audio Capture
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| NAudio | 2.2.1+ | Microphone recording | De facto .NET audio library, WASAPI support, actively maintained |
-
-### Global Hotkeys
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| RegisterHotKey (P/Invoke) | Win32 API | Push-to-talk hotkey | Zero dependencies, most lightweight option |
-| *OR* NonInvasiveKeyboardHook | 2.2.0 | Alternative if P/Invoke is complex | NuGet package, simpler API |
-
-### HTTP Client
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| HttpClient | Built-in (.NET 8) | Azure OpenAI API calls | Built-in, no dependencies, async/await |
-| *OR* Azure.AI.OpenAI | 2.x | Typed SDK | Better auth handling, but adds ~5MB |
-
-### Supporting Libraries
-
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| System.Text.Json | Built-in | JSON parsing | API responses |
-| System.Windows.Forms.NotifyIcon | Built-in | System tray icon | Tray presence |
+**Confidence: HIGH** — All features verified as achievable with current stack.
 
 ---
 
-## Language/Framework Evaluation
+## Stack Status: NO CHANGES REQUIRED
 
-### Options Considered
+### Existing Stack (Validated, Unchanged)
 
-| Option | Pros | Cons | Memory (Idle) | Verdict |
-|--------|------|------|---------------|---------|
-| **C# .NET 8 WinForms** | Native, tiny footprint, AOT, mature audio libs | Windows-only (acceptable) | 10-20MB | **WINNER** |
-| Tauri 2.0 | Cross-platform, Rust backend, 30-40MB RAM | Audio plugins immature, learning curve | 30-40MB | Runner-up |
-| Go + systray | Fast, single binary, cross-platform | Audio capture is harder, less Windows-native | 15-30MB | Viable |
-| Python + pystray | Rapid development, NAudio-like libs exist | Requires Python runtime, GIL issues | 40-60MB | Avoid |
-| Electron | Mature ecosystem, easy dev | 200-400MB RAM, slow startup | 200-400MB | **REJECTED** |
-| C++/Win32 | Ultimate control, smallest possible | Development time, complexity | 5-10MB | Overkill |
-
-### Winner: C# .NET 8 Windows Forms
-
-**Rationale:**
-1. **Memory**: Windows Forms apps are extremely lightweight (10-20MB idle)
-2. **Startup**: Native AOT compilation produces instant startup (<100ms cold)
-3. **Audio**: NAudio is the definitive .NET audio library, well-documented
-4. **System Tray**: NotifyIcon is built into Windows Forms — zero dependencies
-5. **Hotkeys**: RegisterHotKey Win32 API via P/Invoke is trivial
-6. **HTTP**: Built-in HttpClient handles Azure API calls perfectly
-7. **Single File**: .NET 8 supports single-file deployment with trimming
-
-**Confidence: HIGH** — This stack is production-proven for exactly this type of Windows utility app.
+| Technology | Version | Purpose | Status for v1.1 |
+|------------|---------|---------|-----------------|
+| .NET | 8 | Runtime | **No change** |
+| WinForms | Built-in | System tray & minimal UI | **No change** |
+| NAudio | 2.2.1 | Audio capture | **Used for new feature** (device enumeration) |
+| Azure.AI.OpenAI | 2.1.0 | Whisper API | **Used for new feature** (language parameter) |
+| WH_KEYBOARD_LL hook | Win32 API | Global hotkey | **Used for new feature** (modifier detection) |
+| DPAPI | Built-in | Credential encryption | **No change** |
+| ApplicationContext | Built-in | Formless tray app | **No change** |
 
 ---
 
-## Audio Capture Deep Dive
+## Feature Implementation Strategy
 
-### NAudio (Recommended)
+### 1. Hotkey Modifier Support (Ctrl+X, Shift+Y)
 
-**What it is:** Open-source .NET audio library by Mark Heath
+**Goal:** Allow users to configure hotkeys with modifier keys (Ctrl, Shift, Alt, Win) + base key.
 
-**Why NAudio:**
-- Supports WaveInEvent for microphone capture
-- WASAPI support for low-latency recording
-- Can output to WAV format (required by Whisper API)
-- Actively maintained (v2.2.1 released 2024)
-- Excellent documentation and examples
+**Existing capability:** WH_KEYBOARD_LL hook already captures all keyboard input, including modifier states.
 
-**Recording Pattern:**
+**What's needed:**
+- **Modifier detection:** Check `GetAsyncKeyState()` for Ctrl/Shift/Alt/Win when base key is pressed.
+- **Configuration storage:** Store modifier + key combination in settings (e.g., `"Ctrl+Shift+X"`).
+
+**Implementation approach:**
+
 ```csharp
-var waveIn = new WaveInEvent {
-    DeviceNumber = 0,  // default microphone
-    WaveFormat = new WaveFormat(16000, 16, 1),  // 16kHz, 16-bit, mono (Whisper optimal)
-    BufferMilliseconds = 50
-};
-waveIn.DataAvailable += (s, e) => memoryStream.Write(e.Buffer, 0, e.BytesRecorded);
-waveIn.StartRecording();
-// ... on hotkey release
-waveIn.StopRecording();
-```
+// Modifier constants (existing in Windows API)
+private const int MOD_ALT = 0x0001;
+private const int MOD_CONTROL = 0x0002;
+private const int MOD_SHIFT = 0x0004;
+private const int MOD_WIN = 0x0008;
 
-**Format for Whisper API:**
-- Whisper resamples to 16kHz internally
-- Recording at 16kHz, 16-bit PCM, mono is optimal
-- Reduces file size and upload time
-- Supported formats: wav, mp3, mp4, mpeg, mpga, m4a, webm
+// In keyboard hook callback
+private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+{
+    if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+    {
+        int vkCode = Marshal.ReadInt32(lParam);
 
-**Memory Efficiency:**
-- Use MemoryStream to accumulate audio in RAM
-- Typical 30-second recording at 16kHz mono = ~1MB
-- Dispose WaveInEvent when not recording
+        // Check modifier states
+        bool ctrlPressed = (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+        bool shiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+        bool altPressed = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+        bool winPressed = (GetAsyncKeyState(VK_LWIN) & 0x8000) != 0 ||
+                          (GetAsyncKeyState(VK_RWIN) & 0x8000) != 0;
 
-**Confidence: HIGH** — NAudio is the standard choice, verified via [official GitHub](https://github.com/naudio/NAudio) and [Mark Heath's blog](https://markheath.net/post/how-to-record-and-play-audio-at-same).
-
-### Alternatives Considered
-
-| Library | Status | Why Not |
-|---------|--------|---------|
-| NAudio | **RECOMMENDED** | — |
-| Windows.Media.Capture (UWP) | Available | More complex, requires UWP APIs, larger footprint |
-| DirectShow | Legacy | Microsoft recommends Media Foundation instead |
-| WASAPI (direct P/Invoke) | Works | NAudio wraps this already, no benefit to raw |
-
----
-
-## System Tray Implementation
-
-### NotifyIcon (Built-in)
-
-**What it is:** System.Windows.Forms.NotifyIcon — built into .NET Windows Forms
-
-**Why NotifyIcon:**
-- Zero external dependencies
-- Full Windows system tray integration
-- Supports icon changes (for recording state)
-- Context menu support (for settings, exit)
-- Balloon tip notifications
-
-**Implementation Pattern:**
-```csharp
-var notifyIcon = new NotifyIcon {
-    Icon = new Icon("icon.ico"),
-    Visible = true,
-    Text = "Coxixo",
-    ContextMenuStrip = new ContextMenuStrip()
-};
-notifyIcon.ContextMenuStrip.Items.Add("Settings", null, OnSettings);
-notifyIcon.ContextMenuStrip.Items.Add("Exit", null, OnExit);
-```
-
-**Visual Feedback:**
-- Change Icon property to show recording state (red dot, microphone active)
-- Use ShowBalloonTip for notifications (optional)
-
-**Lightweight Run Pattern:**
-Instead of a Form, use ApplicationContext for headless operation:
-```csharp
-Application.Run(new TrayApplicationContext());
-```
-
-**Confidence: HIGH** — This is the standard approach, verified via [Microsoft Learn documentation](https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.notifyicon?view=windowsdesktop-9.0).
-
-### Alternatives Considered
-
-| Library | Status | Why Not |
-|---------|--------|---------|
-| NotifyIcon (WinForms) | **RECOMMENDED** | — |
-| H.NotifyIcon (WPF) | Good | Adds WPF dependency, heavier |
-| Hardcodet.NotifyIcon (WPF) | Good | Same — WPF overhead unnecessary |
-
----
-
-## Global Hotkeys Implementation
-
-### RegisterHotKey P/Invoke (Recommended)
-
-**What it is:** Direct Win32 API call via P/Invoke
-
-**Why P/Invoke:**
-- Zero external dependencies
-- Most lightweight option
-- Full control over hotkey registration
-- Standard Windows pattern
-
-**Implementation Pattern:**
-```csharp
-[DllImport("user32.dll")]
-private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-
-[DllImport("user32.dll")]
-private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
-// Register Ctrl+Shift+Space as push-to-talk
-RegisterHotKey(this.Handle, 1, MOD_CONTROL | MOD_SHIFT, VK_SPACE);
-
-// Handle WM_HOTKEY in WndProc
-protected override void WndProc(ref Message m) {
-    if (m.Msg == WM_HOTKEY) {
-        // Start/stop recording
+        // Match against configured hotkey
+        if (vkCode == configuredKey &&
+            ctrlPressed == configuredCtrl &&
+            shiftPressed == configuredShift &&
+            altPressed == configuredAlt &&
+            winPressed == configuredWin)
+        {
+            // Trigger recording
+        }
     }
-    base.WndProc(ref m);
+    return CallNextHookEx(_hookID, nCode, wParam, lParam);
+}
+
+[DllImport("user32.dll")]
+private static extern short GetAsyncKeyState(int vKey);
+```
+
+**New P/Invoke required:**
+
+```csharp
+[DllImport("user32.dll")]
+private static extern short GetAsyncKeyState(int vKey);
+```
+
+**Constants needed:**
+
+```csharp
+private const int VK_CONTROL = 0x11;
+private const int VK_SHIFT = 0x10;
+private const int VK_MENU = 0x12;  // Alt key
+private const int VK_LWIN = 0x5B;
+private const int VK_RWIN = 0x5C;
+```
+
+**Confidence: HIGH** — GetAsyncKeyState is standard Win32 API, works with existing WH_KEYBOARD_LL hook.
+
+**Sources:**
+- [Microsoft Learn: GetAsyncKeyState function](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate)
+- [How to register a global hotkey for your application in C#](https://www.fluxbytes.com/csharp/how-to-register-a-global-hotkey-for-your-application-in-c/)
+- [Check which modifier key is pressed - Windows Forms .NET](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/input-keyboard/how-to-check-modifier-key?view=netdesktop-8.0)
+
+---
+
+### 2. Microphone Selection (Enumerate Devices)
+
+**Goal:** Allow users to select which microphone to use for recording.
+
+**Existing capability:** NAudio 2.2.1 already includes `NAudio.CoreAudioApi.MMDeviceEnumerator`.
+
+**What's needed:**
+- **Enumerate input devices:** Use `MMDeviceEnumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)`.
+- **Store device selection:** Save selected device ID in settings.
+- **Apply on recording:** Set `WaveInEvent.DeviceNumber` to selected device index.
+
+**Implementation approach:**
+
+```csharp
+using NAudio.CoreAudioApi;
+using NAudio.Wave;
+
+// Enumerate available microphones
+public List<AudioDevice> GetAvailableMicrophones()
+{
+    var devices = new List<AudioDevice>();
+
+    // Method 1: Using MMDeviceEnumerator (preferred - full device names)
+    var enumerator = new MMDeviceEnumerator();
+    int deviceIndex = 0;
+    foreach (var device in enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active))
+    {
+        devices.Add(new AudioDevice
+        {
+            Index = deviceIndex,
+            Name = device.FriendlyName,
+            Id = device.ID
+        });
+        deviceIndex++;
+    }
+
+    // Method 2: Using WaveIn.GetCapabilities (alternative, 31-char limit)
+    // for (int i = 0; i < WaveIn.DeviceCount; i++)
+    // {
+    //     var capabilities = WaveIn.GetCapabilities(i);
+    //     devices.Add(new AudioDevice { Index = i, Name = capabilities.ProductName });
+    // }
+
+    return devices;
+}
+
+// Apply selected device
+var waveIn = new WaveInEvent
+{
+    DeviceNumber = selectedDeviceIndex,  // User's selection
+    WaveFormat = new WaveFormat(16000, 16, 1)
+};
+```
+
+**Device mapping:**
+- `MMDeviceEnumerator` provides full device names and IDs.
+- `WaveInEvent.DeviceNumber` expects an index (0 to DeviceCount-1).
+- Map `MMDevice` index to `WaveInEvent.DeviceNumber` via enumeration order.
+
+**Default device:**
+- If user hasn't selected a device, use `DeviceNumber = 0` (system default microphone).
+
+**Confidence: HIGH** — NAudio.CoreAudioApi is included in NAudio 2.2.1. MMDeviceEnumerator is the recommended approach.
+
+**Sources:**
+- [NAudio GitHub: EnumerateOutputDevices.md](https://github.com/naudio/NAudio/blob/master/Docs/EnumerateOutputDevices.md)
+- [Microsoft Q&A: Show all available input audio devices](https://learn.microsoft.com/en-us/answers/questions/1367599/my-question-is-how-to-show-all-the-available-input)
+- [Access Microphone Audio with C#](https://swharden.com/csdv/audio/naudio/)
+- [Listing Audio Recording Equipment using NAudio](https://copyprogramming.com/howto/enumerate-recording-devices-in-naudio)
+
+---
+
+### 3. Language Selection (PT/EN/Auto-Detect)
+
+**Goal:** Allow users to specify transcription language (Portuguese, English, or auto-detect).
+
+**Existing capability:** Azure.AI.OpenAI 2.1.0 `AudioTranscriptionOptions` includes `Language` property.
+
+**What's needed:**
+- **Language parameter:** Pass ISO-639-1 code to `AudioTranscriptionOptions.Language`.
+- **Supported codes:** `"pt"` (Portuguese), `"en"` (English), `null` (auto-detect).
+
+**Implementation approach:**
+
+```csharp
+using Azure.AI.OpenAI;
+
+// Language configuration options
+public enum TranscriptionLanguage
+{
+    AutoDetect,  // null (Whisper auto-detects)
+    Portuguese,  // "pt"
+    English      // "en"
+}
+
+// Apply language to transcription
+var options = new AudioTranscriptionOptions
+{
+    DeploymentName = "whisper-deployment",
+    AudioData = BinaryData.FromBytes(audioBytes),
+    Filename = "audio.wav",
+    Language = selectedLanguage switch
+    {
+        TranscriptionLanguage.Portuguese => "pt",
+        TranscriptionLanguage.English => "en",
+        TranscriptionLanguage.AutoDetect => null,
+        _ => null
+    }
+};
+
+var result = await client.GetAudioTranscriptionAsync(options);
+string transcription = result.Value.Text;
+```
+
+**Supported languages:**
+- Whisper API supports 99 languages (Afrikaans, Arabic, Chinese, English, French, German, Hindi, Italian, Japanese, Korean, Portuguese, Russian, Spanish, and 86+ more).
+- Language codes follow ISO-639-1 format (two-letter codes: `"en"`, `"pt"`, `"es"`, `"fr"`, etc.).
+- If `Language` is `null`, Whisper auto-detects language from audio (default behavior).
+
+**Trade-offs:**
+- **Auto-detect (null):** Flexible, but may add 1-2 seconds to processing time for language detection.
+- **Specified language:** Faster processing, better accuracy if user knows language in advance.
+
+**For Coxixo use case:**
+- **Portuguese users:** Set `Language = "pt"` (faster, more accurate).
+- **English users:** Set `Language = "en"`.
+- **Mixed use:** Use auto-detect, accept slight latency.
+
+**Confidence: HIGH** — Azure.AI.OpenAI 2.1.0 supports language parameter. ISO-639-1 codes verified.
+
+**Sources:**
+- [Speech to text with the Azure OpenAI Whisper model](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/whisper-quickstart?view=foundry-classic)
+- [OpenAI Whisper Configuration | FoloToy Docs](https://docs.folotoy.com/docs/configuration/stt/openai-whisper/)
+- [Supported Languages | Whisper API Docs](https://whisper-api.com/docs/languages/)
+- [Whisper (transcribe) API verbose_json results, format of language property?](https://community.openai.com/t/whisper-transcribe-api-verbose-json-results-format-of-language-property/646014)
+
+---
+
+### 4. Windows Startup (Launch on Boot)
+
+**Goal:** Allow app to start automatically when Windows boots.
+
+**Two approaches available:**
+
+#### Approach A: Registry Run Key (Recommended for Simplicity)
+
+**How it works:**
+- Add executable path to `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`.
+- Windows launches app automatically when user logs in.
+
+**Implementation:**
+
+```csharp
+using Microsoft.Win32;
+
+public void EnableStartup(bool enable)
+{
+    const string appName = "Coxixo";
+    string exePath = Application.ExecutablePath;
+
+    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
+        @"Software\Microsoft\Windows\CurrentVersion\Run", true))
+    {
+        if (enable)
+        {
+            key.SetValue(appName, exePath);
+        }
+        else
+        {
+            key.DeleteValue(appName, false);
+        }
+    }
+}
+
+public bool IsStartupEnabled()
+{
+    const string appName = "Coxixo";
+    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
+        @"Software\Microsoft\Windows\CurrentVersion\Run", false))
+    {
+        return key?.GetValue(appName) != null;
+    }
 }
 ```
 
-**Push-to-Talk Challenge:**
-- RegisterHotKey only fires on key DOWN
-- For push-to-talk (hold to record), need to detect key UP
-- Solution: Use low-level keyboard hook (SetWindowsHookEx) or NonInvasiveKeyboardHook
+**Pros:**
+- Simple to implement (5 lines of code).
+- No dependencies beyond `Microsoft.Win32` (built-in).
+- Standard pattern for user-level startup.
 
-**Confidence: MEDIUM** — RegisterHotKey is straightforward, but push-to-talk (hold/release) may need keyboard hook. See [Microsoft documentation](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerhotkey).
+**Cons:**
+- User-level only (HKEY_CURRENT_USER). For all-users, need HKEY_LOCAL_MACHINE (requires admin).
+- No advanced scheduling (delay, retry, conditions).
+- Less robust than Task Scheduler (e.g., no recovery on failure).
 
-### Alternative: NonInvasiveKeyboardHook
+**Confidence: HIGH** — Standard approach for lightweight startup. Built-in .NET API.
 
-**What it is:** NuGet package that wraps low-level keyboard hooks
+**Sources:**
+- [Run and RunOnce Registry Keys - Win32 apps](https://learn.microsoft.com/en-us/windows/win32/setupapi/run-and-runonce-registry-keys)
+- [Guide: Add and Remove Windows Startup Programs](https://www.ninjaone.com/blog/check-and-manage-windows-startup-programs/)
 
-**When to use:** If push-to-talk requires key-up detection
+#### Approach B: Task Scheduler (Recommended for Production)
 
-```csharp
-var keyboardHookManager = new KeyboardHookManager();
-keyboardHookManager.Start();
-keyboardHookManager.RegisterHotkey(new[] { ModifierKeys.Control }, Keys.Space, () => {
-    // Key pressed - start recording
-});
-```
+**How it works:**
+- Create scheduled task with "At startup" trigger.
+- More robust, supports delayed start, retry on failure, elevation without UAC prompts.
 
-**Trade-off:** Adds ~50KB dependency, but simplifies key-up detection
-
-**Confidence: MEDIUM** — Library is maintained, but verify key-up detection capabilities via [GitHub](https://github.com/kfirprods/NonInvasiveKeyboardHook).
-
----
-
-## HTTP Client for Azure OpenAI
-
-### HttpClient (Built-in) - Recommended
-
-**What it is:** Built-in .NET HTTP client
-
-**Why HttpClient:**
-- Zero dependencies
-- Fully async
-- Handles multipart/form-data for audio upload
-- Works with Azure API key authentication
-
-**Implementation Pattern:**
-```csharp
-using var client = new HttpClient();
-client.DefaultRequestHeaders.Add("api-key", apiKey);
-
-using var content = new MultipartFormDataContent();
-content.Add(new ByteArrayContent(audioBytes), "file", "audio.wav");
-content.Add(new StringContent("pt"), "language");
-
-var response = await client.PostAsync(
-    $"{endpoint}/openai/deployments/{deployment}/audio/transcriptions?api-version=2024-02-01",
-    content
-);
-var result = await response.Content.ReadAsStringAsync();
-```
-
-**Azure OpenAI Whisper Specifics:**
-- Max file size: 25MB
-- Supported formats: mp3, mp4, mpeg, mpga, m4a, wav, webm
-- Endpoint format: `{endpoint}/openai/deployments/{deployment}/audio/transcriptions`
-- Required header: `api-key: {your-key}`
-- Language hint: `language=pt` for Portuguese
-
-**Confidence: HIGH** — Standard approach, verified via [Azure OpenAI documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/whisper-quickstart?view=foundry-classic).
-
-### Alternative: Azure.AI.OpenAI SDK
-
-**What it is:** Official Microsoft SDK for Azure OpenAI
-
-**When to use:** If you want typed responses, better error handling, or Entra ID auth
+**Implementation:**
 
 ```csharp
-var client = new AzureOpenAIClient(
-    new Uri(endpoint),
-    new ApiKeyCredential(apiKey)
-);
-var result = await client.GetAudioTranscriptionAsync(
-    "whisper-deployment",
-    audioStream,
-    new AudioTranscriptionOptions { Language = "pt" }
-);
+using System.Diagnostics;
+
+public void EnableStartupViaTaskScheduler(bool enable)
+{
+    const string taskName = "CoxixoStartup";
+    string exePath = Application.ExecutablePath;
+
+    if (enable)
+    {
+        // Create scheduled task using schtasks.exe
+        var psi = new ProcessStartInfo
+        {
+            FileName = "schtasks.exe",
+            Arguments = $"/Create /TN \"{taskName}\" /TR \"{exePath}\" " +
+                       "/SC ONLOGON /RL HIGHEST /F",
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        Process.Start(psi)?.WaitForExit();
+    }
+    else
+    {
+        // Delete scheduled task
+        var psi = new ProcessStartInfo
+        {
+            FileName = "schtasks.exe",
+            Arguments = $"/Delete /TN \"{taskName}\" /F",
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        Process.Start(psi)?.WaitForExit();
+    }
+}
+
+public bool IsStartupEnabledViaTaskScheduler()
+{
+    const string taskName = "CoxixoStartup";
+    var psi = new ProcessStartInfo
+    {
+        FileName = "schtasks.exe",
+        Arguments = $"/Query /TN \"{taskName}\"",
+        UseShellExecute = false,
+        CreateNoWindow = true,
+        RedirectStandardOutput = true
+    };
+
+    var process = Process.Start(psi);
+    process?.WaitForExit();
+    return process?.ExitCode == 0;  // 0 = task exists, 1 = task not found
+}
 ```
 
-**Trade-off:** Adds ~5MB to binary, but provides:
-- Typed responses
-- Better error handling
-- Support for Microsoft Entra ID auth (recommended for production)
+**Pros:**
+- More robust than registry Run key.
+- Supports delayed start (e.g., 30 seconds after logon to avoid boot congestion).
+- Supports elevated privileges without UAC prompts (if needed).
+- Includes execution history and failure recovery.
 
-**Confidence: HIGH** — Official SDK, well-documented via [Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet).
+**Cons:**
+- Slightly more complex (requires spawning schtasks.exe).
+- Task Scheduler service must be running (default on Windows).
+
+**Confidence: HIGH** — Standard Windows approach. schtasks.exe is built into Windows.
+
+**Sources:**
+- [Task Scheduler for developers - Win32 apps](https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-start-page)
+- [Automating Service Start on Windows Startup with Task Scheduler](https://medium.com/@mcansener/automating-service-restart-on-windows-startup-with-task-scheduler-ca1e48879648)
+- [Troubleshoot Task Scheduler Service Startup Failure](https://learn.microsoft.com/en-us/troubleshoot/windows-client/system-management-components/task-scheduler-service-not-start)
+
+#### Recommendation: Start with Registry Run Key, Offer Task Scheduler Later
+
+**v1.1 MVP:**
+- Use **Registry Run key** for simplicity and zero complexity.
+- Sufficient for most users (tray app doesn't need elevation).
+
+**Future enhancement (v1.2+):**
+- Add Task Scheduler option for users who want delayed start or enterprise deployment.
+
+**Confidence: HIGH** — Both approaches are well-documented and production-proven.
 
 ---
 
-## Rejected Alternatives
+## What NOT to Add (Avoiding Unnecessary Dependencies)
 
-### Electron - REJECTED
+### NO New NuGet Packages Required
 
-| Aspect | Issue |
-|--------|-------|
-| Memory | 200-400MB RAM idle — 10-20x heavier than WinForms |
-| Startup | 1-2 seconds cold start vs <100ms for AOT .NET |
-| Binary Size | 80-120MB vs 15-20MB for trimmed .NET |
-| Rationale | Bundles entire Chromium engine for a tray app with no UI |
+| Feature | Existing Solution | Why Not Add Package |
+|---------|-------------------|---------------------|
+| Hotkey modifiers | GetAsyncKeyState() P/Invoke | Built-in Win32 API, zero overhead |
+| Microphone enumeration | NAudio.CoreAudioApi (already included) | Already in NAudio 2.2.1 |
+| Language selection | Azure.AI.OpenAI Language property | Already in Azure.AI.OpenAI 2.1.0 |
+| Windows startup | Registry or schtasks.exe | Built-in .NET and Windows APIs |
 
-**Source:** [Tauri vs Electron comparison](https://www.levminer.com/blog/tauri-vs-electron)
+### Rejected Third-Party Options
 
-### Tauri 2.0 - Considered but Not Recommended
-
-| Aspect | Status |
-|--------|--------|
-| Memory | 30-40MB — better than Electron, but still 2-3x WinForms |
-| Audio | tauri-plugin-mic-recorder exists but is immature (v2.0.0 March 2025) |
-| Learning Curve | Requires Rust knowledge for backend |
-| Verdict | Good option if cross-platform is needed later, overkill for Windows-only v1 |
-
-**Source:** [tauri-plugin-mic-recorder on crates.io](https://crates.io/crates/tauri-plugin-mic-recorder)
-
-### Python - REJECTED
-
-| Aspect | Issue |
-|--------|-------|
-| Memory | 40-60MB due to Python runtime |
-| Startup | Slow interpreter startup |
-| Distribution | Requires Python installation or bundled runtime |
-| Threading | GIL complicates audio + UI + network concurrency |
-
-### Go - Viable Alternative
-
-| Aspect | Status |
-|--------|--------|
-| Memory | 15-30MB — competitive |
-| Audio | Less mature Windows audio libraries |
-| System Tray | fyne.io/systray works well |
-| Verdict | Viable if team prefers Go, but .NET has better Windows integration |
-
-**Source:** [fyne.io/systray on Go Packages](https://pkg.go.dev/fyne.io/systray)
+| Library | Feature | Why Not |
+|---------|---------|---------|
+| GlobalHotKeys (NuGet) | Hotkey modifiers | Unnecessary — GetAsyncKeyState() is simpler |
+| TaskScheduler (NuGet wrapper) | Windows startup | Unnecessary — schtasks.exe or Registry API works |
+| System.Speech (built-in) | Language detection | Not needed — Whisper auto-detects |
 
 ---
 
-## Deployment & Size Optimization
+## Version Verification
 
-### .NET 8 Single-File with Trimming
+| Component | Current Version | v1.1 Status | Notes |
+|-----------|----------------|-------------|-------|
+| .NET | 8.0 | **Compatible** | All features work with .NET 8 |
+| NAudio | 2.2.1 | **Compatible** | MMDeviceEnumerator included |
+| Azure.AI.OpenAI | 2.1.0 | **Compatible** | Language property supported |
+| WH_KEYBOARD_LL hook | Win32 API | **Compatible** | GetAsyncKeyState() works with existing hook |
 
-**Configuration:**
-```xml
-<PropertyGroup>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>link</TrimMode>
-</PropertyGroup>
-```
-
-**Expected Size:** 15-25MB single executable (self-contained)
-
-### Native AOT (Optional - .NET 9 Better Support)
-
-**Configuration:**
-```xml
-<PropertyGroup>
-    <PublishAot>true</PublishAot>
-</PropertyGroup>
-```
-
-**Benefits:**
-- Instant startup (<100ms)
-- 30-40% less memory at runtime
-- Single native executable
-
-**Caveats:**
-- WinForms AOT support is experimental in .NET 8
-- Better support in .NET 9
-- May need `<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>`
-
-**Expected Size:** 15-20MB native executable
-
-**Confidence: MEDIUM** — AOT for WinForms is improving but not fully production-ready. Trimmed single-file is the safe bet.
-
-**Source:** [GitHub issue on WinForms AOT size](https://github.com/dotnet/winforms/issues/9911)
+**Confidence: HIGH** — No version upgrades needed. All features achievable with current stack.
 
 ---
 
-## Installation Commands
+## Integration Points with Existing Code
 
-### Create Project
+### 1. Hotkey Modifier Detection
+**Integrates with:** Existing `SetHook()` and `HookCallback()` in keyboard hook implementation.
+**Change required:** Add `GetAsyncKeyState()` checks in `HookCallback()` before triggering recording.
 
-```bash
-dotnet new winforms -n Coxixo -f net8.0
-cd Coxixo
-```
+### 2. Microphone Enumeration
+**Integrates with:** Existing `WaveInEvent` initialization in audio capture logic.
+**Change required:** Add settings UI for device selection. Apply `DeviceNumber` property.
 
-### Add Dependencies
+### 3. Language Selection
+**Integrates with:** Existing Azure OpenAI API call in transcription logic.
+**Change required:** Add `Language` property to `AudioTranscriptionOptions`. Default to `null` (auto-detect).
 
-```bash
-# Audio capture
-dotnet add package NAudio
+### 4. Windows Startup
+**Integrates with:** Settings/preferences system (new).
+**Change required:** Add checkbox in settings UI. Call registry/schtasks functions on toggle.
 
-# Optional: Azure SDK (if not using raw HttpClient)
-dotnet add package Azure.AI.OpenAI
-
-# Optional: Keyboard hook helper (if P/Invoke is complex)
-dotnet add package NonInvasiveKeyboardHookLibrary
-```
-
-### Project File Configuration
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishTrimmed>true</PublishTrimmed>
-  </PropertyGroup>
-</Project>
-```
+**All integrations are additive** — no breaking changes to existing v1.0 code.
 
 ---
 
 ## Confidence Summary
 
-| Component | Recommendation | Confidence | Reason |
-|-----------|---------------|------------|--------|
-| **Language/Runtime** | C# .NET 8 | HIGH | Production-proven, optimal for Windows utilities |
-| **UI Framework** | Windows Forms | HIGH | Lightest weight, NotifyIcon built-in |
-| **Audio Capture** | NAudio 2.2.x | HIGH | De facto standard, excellent docs |
-| **System Tray** | NotifyIcon | HIGH | Built-in, zero dependencies |
-| **Global Hotkeys** | RegisterHotKey + Hook | MEDIUM | P/Invoke straightforward, push-to-talk may need hook |
-| **HTTP Client** | HttpClient (built-in) | HIGH | Zero dependencies, async, handles multipart |
-| **Deployment** | Single-file trimmed | HIGH | Well-supported in .NET 8 |
-| **Native AOT** | Optional | MEDIUM | Experimental for WinForms, better in .NET 9 |
+| Feature | Implementation | Confidence | Reason |
+|---------|---------------|------------|--------|
+| **Hotkey modifiers** | GetAsyncKeyState() P/Invoke | HIGH | Standard Win32 API, verified in existing hook pattern |
+| **Microphone selection** | NAudio.CoreAudioApi.MMDeviceEnumerator | HIGH | Already in NAudio 2.2.1, verified in docs |
+| **Language selection** | Azure.AI.OpenAI Language property | HIGH | Verified in Azure.AI.OpenAI 2.1.0 API docs |
+| **Windows startup (Registry)** | Microsoft.Win32.Registry API | HIGH | Built-in .NET, standard pattern |
+| **Windows startup (Task Scheduler)** | schtasks.exe via Process.Start() | HIGH | Standard Windows utility, production-proven |
+
+**Overall confidence: HIGH** — All features verified as achievable with existing stack. Zero new dependencies required.
 
 ---
 
 ## Sources
 
-### Official Documentation
-- [Microsoft Learn: NotifyIcon Class](https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.notifyicon?view=windowsdesktop-9.0)
-- [Microsoft Learn: RegisterHotKey function](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerhotkey)
-- [Microsoft Learn: Azure OpenAI Whisper Quickstart](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/whisper-quickstart?view=foundry-classic)
-- [Microsoft Learn: Native AOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
-- [Microsoft Learn: .NET Single-file deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/overview)
+### Official Microsoft Documentation
+- [Microsoft Learn: GetAsyncKeyState function](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate)
+- [Microsoft Learn: Check which modifier key is pressed - Windows Forms .NET](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/input-keyboard/how-to-check-modifier-key?view=netdesktop-8.0)
+- [Microsoft Learn: Run and RunOnce Registry Keys](https://learn.microsoft.com/en-us/windows/win32/setupapi/run-and-runonce-registry-keys)
+- [Microsoft Learn: Task Scheduler for developers](https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-start-page)
+- [Microsoft Learn: Speech to text with the Azure OpenAI Whisper model](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/whisper-quickstart?view=foundry-classic)
+- [Microsoft Learn: Troubleshoot Task Scheduler Service Startup Failure](https://learn.microsoft.com/en-us/troubleshoot/windows-client/system-management-components/task-scheduler-service-not-start)
 
-### Libraries
-- [NAudio GitHub](https://github.com/naudio/NAudio)
-- [NonInvasiveKeyboardHook GitHub](https://github.com/kfirprods/NonInvasiveKeyboardHook)
-- [Azure.AI.OpenAI NuGet](https://www.nuget.org/packages/Azure.AI.OpenAI)
+### NAudio Documentation and Examples
+- [NAudio GitHub: EnumerateOutputDevices.md](https://github.com/naudio/NAudio/blob/master/Docs/EnumerateOutputDevices.md)
+- [Microsoft Q&A: Show all available input audio devices](https://learn.microsoft.com/en-us/answers/questions/1367599/my-question-is-how-to-show-all-the-available-input)
+- [Access Microphone Audio with C#](https://swharden.com/csdv/audio/naudio/)
+- [Listing Audio Recording Equipment using NAudio](https://copyprogramming.com/howto/enumerate-recording-devices-in-naudio)
+- [C# Microphone Level Monitor](https://swharden.com/blog/2021-07-03-csharp-microphone/)
 
-### Comparisons
-- [Tauri vs Electron - Levminer](https://www.levminer.com/blog/tauri-vs-electron)
-- [Tauri vs Electron 2025 - Codeology](https://codeology.co.nz/articles/tauri-vs-electron-2025-desktop-development.html)
-- [Native AOT performance - ABP.IO](https://abp.io/community/articles/native-aot-how-to-fasten-startup-time-and-memory-footprint-3gsfre75)
+### Whisper API Language Support
+- [Supported Languages | Whisper API Docs](https://whisper-api.com/docs/languages/)
+- [OpenAI Whisper Configuration | FoloToy Docs](https://docs.folotoy.com/docs/configuration/stt/openai-whisper/)
+- [Whisper (transcribe) API verbose_json results, format of language property?](https://community.openai.com/t/whisper-transcribe-api-verbose-json-results-format-of-language-property/646014)
+- [GitHub: openai/whisper](https://github.com/openai/whisper)
 
-### Audio Format
-- [Whisper API optimal format - DEV Community](https://dev.to/mxro/optimise-openai-whisper-api-audio-format-sampling-rate-and-quality-29fj)
-- [NAudio Microphone Recording - swharden.com](https://swharden.com/csdv/audio/naudio/)
+### Global Hotkey Implementation
+- [How to register a global hotkey for your application in C#](https://www.fluxbytes.com/csharp/how-to-register-a-global-hotkey-for-your-application-in-c/)
+- [pinvoke.net: registerhotkey (user32)](https://www.pinvoke.net/default.aspx/user32/registerhotkey.html)
+- [Global Hotkeys within Desktop Applications - CodeProject](https://www.codeproject.com/Articles/1273010/Global-Hotkeys-within-Desktop-Applications)
+
+### Windows Startup Methods
+- [Guide: Add and Remove Windows Startup Programs](https://www.ninjaone.com/blog/check-and-manage-windows-startup-programs/)
+- [How to Run Apps at Windows 11 Startup: 4 Reliable Methods](https://windowsforum.com/threads/how-to-run-apps-at-windows-11-startup-4-reliable-methods.389680/)
+- [Automating Service Start on Windows Startup with Task Scheduler](https://medium.com/@mcansener/automating-service-restart-on-windows-startup-with-task-scheduler-ca1e48879648)
