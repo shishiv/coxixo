@@ -59,10 +59,11 @@ Plans:
   3. Hotkey picker displays full combination with modifier names (e.g., "Ctrl+Shift+F8")
   4. User sees clear error message when chosen hotkey conflicts with another application
   5. System combinations (Win+X, F12) are blocked with explanation of why they're reserved
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01: HotkeyCombo model, modifier-aware keyboard hook, and hotkey validator
+- [ ] 05-02: Badge-based hotkey picker control, settings form integration, conflict detection
 
 #### Phase 6: Windows Startup
 **Goal**: Users can configure Coxixo to launch automatically with Windows
