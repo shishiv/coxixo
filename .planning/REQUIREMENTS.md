@@ -70,29 +70,29 @@ Deferred to v1.2+.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HKEY-01 | — | Pending |
-| HKEY-02 | — | Pending |
-| HKEY-03 | — | Pending |
-| HKEY-04 | — | Pending |
-| HKEY-05 | — | Pending |
-| MIC-01 | — | Pending |
-| MIC-02 | — | Pending |
-| MIC-03 | — | Pending |
-| MIC-04 | — | Pending |
-| MIC-05 | — | Pending |
-| LANG-01 | — | Pending |
-| LANG-02 | — | Pending |
-| LANG-03 | — | Pending |
-| LANG-04 | — | Pending |
-| START-01 | — | Pending |
-| START-02 | — | Pending |
-| START-03 | — | Pending |
+| HKEY-01 | Phase 5 | Pending |
+| HKEY-02 | Phase 5 | Pending |
+| HKEY-03 | Phase 5 | Pending |
+| HKEY-04 | Phase 5 | Pending |
+| HKEY-05 | Phase 5 | Pending |
+| MIC-01 | Phase 8 | Pending |
+| MIC-02 | Phase 8 | Pending |
+| MIC-03 | Phase 8 | Pending |
+| MIC-04 | Phase 8 | Pending |
+| MIC-05 | Phase 8 | Pending |
+| LANG-01 | Phase 7 | Pending |
+| LANG-02 | Phase 7 | Pending |
+| LANG-03 | Phase 7 | Pending |
+| LANG-04 | Phase 7 | Pending |
+| START-01 | Phase 6 | Pending |
+| START-02 | Phase 6 | Pending |
+| START-03 | Phase 6 | Pending |
 
 **Coverage:**
-- v1.1 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16
+- v1.1 requirements: 17 total
+- Mapped to phases: 17 (100%)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-09*
-*Last updated: 2026-02-09 after initial definition*
+*Last updated: 2026-02-09 after roadmap creation*
