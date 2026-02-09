@@ -10,6 +10,16 @@ A lean Windows system tray app for voice-to-clipboard transcription. Push-to-tal
 
 Frictionless voice input: hold a key, speak, release, paste. Nothing else.
 
+## Current Milestone: v1.1 Configuration & Flexibility
+
+**Goal:** Expand hotkey support, add device and language selection, and enable auto-start — making Coxixo configurable for different workflows.
+
+**Target features:**
+- Hotkey modifier support (Ctrl+X, Shift+Y combinations)
+- Microphone selection (choose from available devices)
+- Transcription language selection (PT, EN, auto-detect)
+- Windows startup option
+
 ## Current State (v1.0 shipped)
 
 - **Codebase:** 1,696 lines of C#, .NET 8 WinForms
@@ -34,12 +44,15 @@ Frictionless voice input: hold a key, speak, release, paste. Nothing else.
 - Brand-compliant tray icons (3-bar sound wave design) — v1.0
 - Dark-themed settings window — v1.0
 
-### Active (v1.1 candidates)
+### Active (v1.1)
 
 - [ ] Hotkey modifier support (Ctrl+X, Shift+Y combinations)
 - [ ] Microphone selection (choose from available devices)
 - [ ] Transcription language selection (PT, EN, auto-detect)
 - [ ] Windows startup option
+
+### Future
+
 - [ ] Recent transcription in tray menu
 
 ### Out of Scope
@@ -84,4 +97,4 @@ Frictionless voice input: hold a key, speak, release, paste. Nothing else.
 | ProcessCmdKey override | Capture Tab, F-keys in hotkey picker | Good |
 
 ---
-*Last updated: 2026-01-19 after v1.0 milestone*
+*Last updated: 2026-02-09 after v1.1 milestone start*
