@@ -9,9 +9,9 @@ namespace Coxixo.Models;
 public class AppSettings
 {
     /// <summary>
-    /// The key used for push-to-talk. Default is F8.
+    /// The hotkey combination used for push-to-talk. Default is F8 with no modifiers.
     /// </summary>
-    public Keys HotkeyKey { get; set; } = Keys.F8;
+    public HotkeyCombo Hotkey { get; set; } = HotkeyCombo.Default();
 
     /// <summary>
     /// Azure OpenAI endpoint URL (e.g., https://xxx.openai.azure.com/)

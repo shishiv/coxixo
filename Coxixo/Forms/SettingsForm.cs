@@ -82,7 +82,7 @@ public partial class SettingsForm : Form
     private void LoadSettings()
     {
         _settings = ConfigurationService.Load();
-        _selectedKey = _settings.HotkeyKey;
+        _selectedKey = _settings.Hotkey.Key;
 
         txtHotkey.Text = _selectedKey.ToString();
         txtEndpoint.Text = _settings.AzureEndpoint;
@@ -219,7 +219,7 @@ public partial class SettingsForm : Form
     private void BtnSave_Click(object? sender, EventArgs e)
     {
         // Update settings
-        _settings.HotkeyKey = _selectedKey;
+        _settings.Hotkey.Key = _selectedKey;
         _settings.AzureEndpoint = txtEndpoint.Text.Trim();
         _settings.WhisperDeployment = txtDeployment.Text.Trim();
 

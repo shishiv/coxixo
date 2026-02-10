@@ -42,7 +42,7 @@ public class TrayApplicationContext : ApplicationContext
         _trayIcon = new NotifyIcon
         {
             Icon = _idleIcon,
-            Text = $"Coxixo - Press {_settings.HotkeyKey} to talk",
+            Text = $"Coxixo - Press {_settings.Hotkey.ToDisplayString()} to talk",
             Visible = true,
             ContextMenuStrip = CreateContextMenu()
         };
@@ -63,7 +63,7 @@ public class TrayApplicationContext : ApplicationContext
 
         // Initialize and start keyboard hook with configured key
         _hotkeyService = new KeyboardHookService();
-        _hotkeyService.TargetKey = _settings.HotkeyKey;
+        _hotkeyService.TargetKey = _settings.Hotkey.Key;
         _hotkeyService.HotkeyPressed += OnHotkeyPressed;
         _hotkeyService.HotkeyReleased += OnHotkeyReleased;
         _hotkeyService.Start();
@@ -107,7 +107,7 @@ public class TrayApplicationContext : ApplicationContext
 
         if (audioData == null)
         {
-            _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+            _trayIcon.Text = $"Coxixo - Press {_settings.Hotkey.ToDisplayString()} to talk";
             return;
         }
 
@@ -117,7 +117,7 @@ public class TrayApplicationContext : ApplicationContext
         if (_transcriptionService == null)
         {
             ShowNotification("Configure API credentials in Settings", ToolTipIcon.Warning);
-            _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+            _trayIcon.Text = $"Coxixo - Press {_settings.Hotkey.ToDisplayString()} to talk";
             return;
         }
 
@@ -158,7 +158,7 @@ public class TrayApplicationContext : ApplicationContext
         }
         finally
         {
-            _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+            _trayIcon.Text = $"Coxixo - Press {_settings.Hotkey.ToDisplayString()} to talk";
         }
     }
 
@@ -262,10 +262,10 @@ public class TrayApplicationContext : ApplicationContext
                 _settings = ConfigurationService.Load();
 
                 // Update hotkey
-                _hotkeyService.TargetKey = _settings.HotkeyKey;
+                _hotkeyService.TargetKey = _settings.Hotkey.Key;
 
                 // Update tooltip
-                _trayIcon.Text = $"Coxixo - Press {_settings.HotkeyKey} to talk";
+                _trayIcon.Text = $"Coxixo - Press {_settings.Hotkey.ToDisplayString()} to talk";
 
                 // Reinitialize transcription service with new credentials
                 TryInitializeTranscriptionService();
