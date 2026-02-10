@@ -61,9 +61,9 @@ public class TrayApplicationContext : ApplicationContext
         _audioCaptureService.RecordingDiscarded += OnRecordingDiscarded;
         _audioCaptureService.CaptureError += OnCaptureError;
 
-        // Initialize and start keyboard hook with configured key
+        // Initialize and start keyboard hook with configured hotkey combo
         _hotkeyService = new KeyboardHookService();
-        _hotkeyService.TargetKey = _settings.Hotkey.Key;
+        _hotkeyService.TargetCombo = _settings.Hotkey;
         _hotkeyService.HotkeyPressed += OnHotkeyPressed;
         _hotkeyService.HotkeyReleased += OnHotkeyReleased;
         _hotkeyService.Start();
@@ -261,8 +261,8 @@ public class TrayApplicationContext : ApplicationContext
                 // Reload settings
                 _settings = ConfigurationService.Load();
 
-                // Update hotkey
-                _hotkeyService.TargetKey = _settings.Hotkey.Key;
+                // Update hotkey combo
+                _hotkeyService.TargetCombo = _settings.Hotkey;
 
                 // Update tooltip
                 _trayIcon.Text = $"Coxixo - Press {_settings.Hotkey.ToDisplayString()} to talk";
