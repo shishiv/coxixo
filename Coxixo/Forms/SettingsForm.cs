@@ -22,6 +22,7 @@ public partial class SettingsForm : Form
     }
 
     private AppSettings _settings = null!; // Initialized in LoadSettings() called from constructor
+    private bool _isLoading;
 
     public SettingsForm()
     {
@@ -35,7 +36,7 @@ public partial class SettingsForm : Form
     {
         // Form properties
         this.Text = "Coxixo Settings";
-        this.Size = new Size(320, 434);
+        this.Size = new Size(320, 469);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
@@ -79,6 +80,10 @@ public partial class SettingsForm : Form
                     btn.BackColor = DarkTheme.Surface;
                 }
             }
+            else if (child is CheckBox cb)
+            {
+                cb.ForeColor = DarkTheme.Text;
+            }
             else if (child is Panel panel)
             {
                 panel.BackColor = DarkTheme.Surface;
@@ -89,11 +94,16 @@ public partial class SettingsForm : Form
 
     private void LoadSettings()
     {
+        _isLoading = true;
+
         _settings = ConfigurationService.Load();
         hotkeyPicker.SelectedCombo = _settings.Hotkey;
         txtEndpoint.Text = _settings.AzureEndpoint;
         txtApiKey.Text = CredentialService.LoadApiKey() ?? "";
         txtDeployment.Text = _settings.WhisperDeployment;
+        chkStartWithWindows.Checked = StartupService.IsEnabled();
+
+        _isLoading = false;
     }
 
     private void OnHotkeyValidationChanged(object? sender, EventArgs e)
@@ -192,6 +202,38 @@ public partial class SettingsForm : Form
         _ = TestConnectionAsync();
     }
 
+    private void ChkStartWithWindows_CheckedChanged(object? sender, EventArgs e)
+    {
+        if (_isLoading)
+            return;
+
+        try
+        {
+            if (chkStartWithWindows.Checked)
+                StartupService.Enable();
+            else
+                StartupService.Disable();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            MessageBox.Show(
+                "Cannot modify startup settings. Your system administrator may have restricted this feature.",
+                "Permission Denied",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+            chkStartWithWindows.Checked = StartupService.IsEnabled();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Failed to update startup settings: {ex.Message}",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            chkStartWithWindows.Checked = StartupService.IsEnabled();
+        }
+    }
+
     private void BtnSave_Click(object? sender, EventArgs e)
     {
         var combo = hotkeyPicker.SelectedCombo ?? HotkeyCombo.Default();
@@ -219,6 +261,7 @@ public partial class SettingsForm : Form
         _settings.Hotkey = combo;
         _settings.AzureEndpoint = txtEndpoint.Text.Trim();
         _settings.WhisperDeployment = txtDeployment.Text.Trim();
+        _settings.StartWithWindows = chkStartWithWindows.Checked;
 
         // Save settings
         ConfigurationService.Save(_settings);

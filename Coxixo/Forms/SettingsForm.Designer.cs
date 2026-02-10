@@ -27,6 +27,9 @@ partial class SettingsForm
     private Label lblDeployment;
     private TextBox txtDeployment;
 
+    // Startup
+    private CheckBox chkStartWithWindows;
+
     // Buttons
     private Button btnTestConnection;
     private Button btnSave;
@@ -67,6 +70,9 @@ partial class SettingsForm
         // Deployment controls
         lblDeployment = new Label();
         txtDeployment = new TextBox();
+
+        // Startup checkbox
+        chkStartWithWindows = new CheckBox();
 
         // Buttons
         btnTestConnection = new Button();
@@ -170,22 +176,29 @@ partial class SettingsForm
         btnTestConnection.Text = "Test Connection";
         btnTestConnection.Click += BtnTestConnection_Click;
 
+        // chkStartWithWindows
+        chkStartWithWindows.Location = new Point(12, 370);
+        chkStartWithWindows.Size = new Size(280, 20);
+        chkStartWithWindows.Name = "chkStartWithWindows";
+        chkStartWithWindows.Text = "Start with Windows";
+        chkStartWithWindows.CheckedChanged += ChkStartWithWindows_CheckedChanged;
+
         // btnCancel
-        btnCancel.Location = new Point(127, 365);
+        btnCancel.Location = new Point(127, 400);
         btnCancel.Size = new Size(80, 30);
         btnCancel.Name = "btnCancel";
         btnCancel.Text = "Cancel";
         btnCancel.Click += BtnCancel_Click;
 
         // btnSave
-        btnSave.Location = new Point(212, 365);
+        btnSave.Location = new Point(212, 400);
         btnSave.Size = new Size(80, 30);
         btnSave.Name = "btnSave";
         btnSave.Text = "Save";
         btnSave.Click += BtnSave_Click;
 
         // SettingsForm
-        this.ClientSize = new Size(304, 405);
+        this.ClientSize = new Size(304, 440);
         this.Controls.Add(pnlStatus);
         this.Controls.Add(lblHotkey);
         this.Controls.Add(hotkeyPicker);
@@ -197,6 +210,7 @@ partial class SettingsForm
         this.Controls.Add(lblDeployment);
         this.Controls.Add(txtDeployment);
         this.Controls.Add(btnTestConnection);
+        this.Controls.Add(chkStartWithWindows);
         this.Controls.Add(btnCancel);
         this.Controls.Add(btnSave);
         this.Name = "SettingsForm";
