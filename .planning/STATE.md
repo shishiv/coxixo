@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 ## Current Position
 
 Phase: 5 of 8 (Hotkey Modifiers)
-Plan: 0 of TBD
-Status: Ready to plan
-Last activity: 2026-02-09 — Roadmap created for v1.1 milestone
+Plan: 1 of 2
+Status: Executing
+Last activity: 2026-02-10 — Completed 05-01-PLAN.md (Hotkey modifiers foundation)
 
 Progress: [████░░░░░░] 44% (4 of 9 phases complete, including v1.0)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9 (v1.0 only)
-- Average duration: Unknown (no metrics from v1.0)
-- Total execution time: ~2 days (2026-01-17 → 2026-01-19)
+- Total plans completed: 10 (9 v1.0 + 1 v1.1)
+- Average duration: 4 minutes (v1.1 only)
+- Total execution time: ~2 days (2026-01-17 → 2026-02-10)
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [████░░░░░░] 44% (4 of 9 phases complete, includin
 | 2. Audio Capture | 2 | - | - |
 | 3. Transcription | 2 | - | - |
 | 4. Polish | 2 | - | - |
+| 5. Hotkey Modifiers | 1 | 4m | 4m |
 
 **Recent Trend:**
-- Last 5 plans: No duration data available
-- Trend: Baseline (starting v1.1)
+- Last plan: 05-01 (4m)
+- Trend: Starting v1.1 execution
 
 *Updated after each plan completion*
 
@@ -49,6 +50,10 @@ Recent decisions affecting current work:
 - v1.0: WH_KEYBOARD_LL hook for global hotkey capture
 - v1.0: DPAPI with custom entropy for credential storage
 - v1.1: Research completed, build order established (Hotkey → Startup → Language → Microphone)
+- 05-01: Use GetKeyState (not GetAsyncKeyState) for modifier detection in hook callback
+- 05-01: Fire HotkeyReleased when modifier released during hold (push-to-talk ergonomics)
+- 05-01: Implement value equality for HotkeyCombo for collection comparisons
+- 05-01: Keep TargetKey property for backward compatibility during transition
 
 ### Pending Todos
 
@@ -60,8 +65,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-09
-Stopped at: Roadmap created, ready to plan Phase 5
+Last session: 2026-02-10
+Stopped at: Completed 05-01-PLAN.md (Hotkey modifiers foundation)
 Resume file: None
 
 ---
