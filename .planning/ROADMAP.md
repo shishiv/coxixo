@@ -87,10 +87,10 @@ Plans:
   2. User can choose "Auto-detect" option for automatic language detection
   3. Selected language persists across app restarts
   4. Whisper API receives correct ISO 639-1 language code for selected language
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01: LanguageCode model, TranscriptionService wiring, and SettingsForm ComboBox with persistence
 
 #### Phase 8: Microphone Selection
 **Goal**: Users can choose which audio input device to use for recording
