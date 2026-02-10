@@ -25,10 +25,10 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 
 ### Language
 
-- [ ] **LANG-01**: User can select transcription language from a dropdown
-- [ ] **LANG-02**: User can choose "Auto-detect" for automatic language detection
-- [ ] **LANG-03**: Selected language persists across app restarts
-- [ ] **LANG-04**: Language selection passes correct ISO 639-1 code to Whisper API
+- [x] **LANG-01**: User can select transcription language from a dropdown
+- [x] **LANG-02**: User can choose "Auto-detect" for automatic language detection
+- [x] **LANG-03**: Selected language persists across app restarts
+- [x] **LANG-04**: Language selection passes correct ISO 639-1 code to Whisper API
 
 ### Startup
 
@@ -80,10 +80,10 @@ Deferred to v1.2+.
 | MIC-03 | Phase 8 | Pending |
 | MIC-04 | Phase 8 | Pending |
 | MIC-05 | Phase 8 | Pending |
-| LANG-01 | Phase 7 | Pending |
-| LANG-02 | Phase 7 | Pending |
-| LANG-03 | Phase 7 | Pending |
-| LANG-04 | Phase 7 | Pending |
+| LANG-01 | Phase 7 | Complete |
+| LANG-02 | Phase 7 | Complete |
+| LANG-03 | Phase 7 | Complete |
+| LANG-04 | Phase 7 | Complete |
 | START-01 | Phase 6 | Pending |
 | START-02 | Phase 6 | Pending |
 | START-03 | Phase 6 | Pending |

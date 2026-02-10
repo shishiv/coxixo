@@ -90,7 +90,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 07-01: LanguageCode model, TranscriptionService wiring, and SettingsForm ComboBox with persistence
+- [x] 07-01: LanguageCode model, TranscriptionService wiring, and SettingsForm ComboBox with persistence
 
 #### Phase 8: Microphone Selection
 **Goal**: Users can choose which audio input device to use for recording
@@ -120,5 +120,5 @@ Phases execute in numeric order: 5 → 6 → 7 → 8
 | 4. Polish | v1.0 | 2/2 | Complete | 2026-01-19 |
 | 5. Hotkey Modifiers | v1.1 | 2/2 | Complete | 2026-02-09 |
 | 6. Windows Startup | v1.1 | 1/1 | Complete | 2026-02-10 |
-| 7. Language Selection | v1.1 | 0/? | Not started | - |
+| 7. Language Selection | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 8. Microphone Selection | v1.1 | 0/? | Not started | - |
