@@ -17,11 +17,11 @@ Requirements for v1.1 milestone. Each maps to roadmap phases.
 
 ### Microphone
 
-- [ ] **MIC-01**: User can see all active audio capture devices in a dropdown
-- [ ] **MIC-02**: User can select which microphone to use for recording
-- [ ] **MIC-03**: Default system device is indicated in the list
-- [ ] **MIC-04**: Selected microphone persists across app restarts
-- [ ] **MIC-05**: App falls back to default device if selected microphone is unavailable
+- [x] **MIC-01**: User can see all active audio capture devices in a dropdown
+- [x] **MIC-02**: User can select which microphone to use for recording
+- [x] **MIC-03**: Default system device is indicated in the list
+- [x] **MIC-04**: Selected microphone persists across app restarts
+- [x] **MIC-05**: App falls back to default device if selected microphone is unavailable
 
 ### Language
 
@@ -75,11 +75,11 @@ Deferred to v1.2+.
 | HKEY-03 | Phase 5 | Pending |
 | HKEY-04 | Phase 5 | Pending |
 | HKEY-05 | Phase 5 | Pending |
-| MIC-01 | Phase 8 | Pending |
-| MIC-02 | Phase 8 | Pending |
-| MIC-03 | Phase 8 | Pending |
-| MIC-04 | Phase 8 | Pending |
-| MIC-05 | Phase 8 | Pending |
+| MIC-01 | Phase 8 | Complete |
+| MIC-02 | Phase 8 | Complete |
+| MIC-03 | Phase 8 | Complete |
+| MIC-04 | Phase 8 | Complete |
+| MIC-05 | Phase 8 | Complete |
 | LANG-01 | Phase 7 | Complete |
 | LANG-02 | Phase 7 | Complete |
 | LANG-03 | Phase 7 | Complete |

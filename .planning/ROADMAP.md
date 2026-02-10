@@ -105,7 +105,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 08-01-PLAN.md -- MicrophoneDeviceNumber model, hybrid device enumeration, ComboBox UI, AudioCaptureService wiring with fallback
+- [x] 08-01: MicrophoneDeviceNumber model, hybrid device enumeration, ComboBox UI, AudioCaptureService wiring with fallback
 
 ## Progress
 
@@ -121,4 +121,4 @@ Phases execute in numeric order: 5 → 6 → 7 → 8
 | 5. Hotkey Modifiers | v1.1 | 2/2 | Complete | 2026-02-09 |
 | 6. Windows Startup | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 7. Language Selection | v1.1 | 1/1 | Complete | 2026-02-10 |
-| 8. Microphone Selection | v1.1 | 0/1 | Not started | - |
+| 8. Microphone Selection | v1.1 | 1/1 | Complete | 2026-02-10 |
