@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 ## Current Position
 
 Phase: 6 of 8 (Windows Startup)
-Plan: 0 of TBD
-Status: Ready to plan
-Last activity: 2026-02-09 — Phase 05 verified and complete
+Plan: 1 of 1
+Status: Phase complete
+Last activity: 2026-02-10 — Completed 06-01-PLAN.md
 
-Progress: [█████░░░░░] 56% (5 of 9 phases complete, including v1.0)
+Progress: [██████░░░░] 67% (6 of 9 phases complete, including v1.0)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11 (9 v1.0 + 2 v1.1)
-- Average duration: 4 minutes (v1.1 only)
+- Total plans completed: 12 (9 v1.0 + 3 v1.1)
+- Average duration: 3.7 minutes (v1.1 only)
 - Total execution time: ~2 days (2026-01-17 → 2026-02-10)
 
 **By Phase:**
@@ -32,10 +32,11 @@ Progress: [█████░░░░░] 56% (5 of 9 phases complete, includin
 | 3. Transcription | 2 | - | - |
 | 4. Polish | 2 | - | - |
 | 5. Hotkey Modifiers | 2 | 8m | 4m |
+| 6. Windows Startup | 1 | 2.5m | 2.5m |
 
 **Recent Trend:**
-- Last plan: 05-02 (4m)
-- Trend: Phase 05 complete, ready for Phase 06
+- Last plan: 06-01 (2.5m)
+- Trend: Phase 06 complete, single-plan phase executed efficiently
 
 *Updated after each plan completion*
 
@@ -56,6 +57,10 @@ Recent decisions affecting current work:
 - 05-01: Keep TargetKey property for backward compatibility during transition
 - [Phase 05]: Use owner-drawn UserControl with GDI+ for badge rendering (avoids FlowLayoutPanel flicker)
 - [Phase 05]: Skip RegisterHotKey probe for bare keys (low-level hooks don't conflict)
+- [Phase 06]: Use HKCU Run registry key for Windows startup (standard approach, no admin required)
+- [Phase 06]: Immediate registry write on checkbox toggle, not deferred to Save (instant feedback)
+- [Phase 06]: Read registry state on form load as source of truth (prevents drift)
+- [Phase 06]: Use _isLoading guard to prevent re-entrant CheckedChanged during LoadSettings
 
 ### Pending Todos
 
@@ -68,7 +73,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Phase 05 verified and complete, ready to plan Phase 06
+Stopped at: Completed 06-01-PLAN.md (Windows Startup complete)
 Resume file: None
 
 ---
