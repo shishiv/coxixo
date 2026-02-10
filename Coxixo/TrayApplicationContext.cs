@@ -97,7 +97,7 @@ public class TrayApplicationContext : ApplicationContext
     {
         StartRecordingAnimation();
         _trayIcon.Text = "Coxixo - Recording...";
-        _audioCaptureService.StartCapture();
+        _audioCaptureService.StartCapture(_settings.MicrophoneDeviceNumber);
     }
 
     private async void OnHotkeyReleased(object? sender, EventArgs e)

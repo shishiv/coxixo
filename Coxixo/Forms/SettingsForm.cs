@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using Coxixo.Controls;
 using Coxixo.Models;
 using Coxixo.Services;
+using NAudio.Wave;
+using NAudio.CoreAudioApi;
 
 namespace Coxixo.Forms;
 
@@ -112,6 +114,73 @@ public partial class SettingsForm : Form
         }
     }
 
+    private List<KeyValuePair<int?, string>> EnumerateAudioDevices()
+    {
+        var devices = new List<KeyValuePair<int?, string>>
+        {
+            new(null, "System Default")
+        };
+
+        try
+        {
+            // Hybrid enumeration: Use CoreAudio for full names, match with WaveInEvent indices
+            using var enumerator = new MMDeviceEnumerator();
+            var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console);
+            var activeDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+
+            for (int i = 0; i < WaveInEvent.DeviceCount; i++)
+            {
+                var caps = WaveInEvent.GetCapabilities(i);
+                var displayName = caps.ProductName;
+
+                // Try to match with MMDevice for full friendly name
+                var matchedDevice = activeDevices.FirstOrDefault(d =>
+                    d.FriendlyName.StartsWith(caps.ProductName, StringComparison.OrdinalIgnoreCase));
+
+                if (matchedDevice != null)
+                {
+                    displayName = matchedDevice.FriendlyName;
+                    if (matchedDevice.ID == defaultDevice.ID)
+                        displayName += " (System Default)";
+                }
+
+                devices.Add(new(i, displayName));
+            }
+        }
+        catch
+        {
+            // Fallback: use basic WaveInEvent enumeration
+            for (int i = 0; i < WaveInEvent.DeviceCount; i++)
+            {
+                var caps = WaveInEvent.GetCapabilities(i);
+                devices.Add(new(i, caps.ProductName));
+            }
+        }
+
+        return devices;
+    }
+
+    private int? ValidateDeviceNumber(int? deviceNumber)
+    {
+        if (deviceNumber == null)
+            return null; // System default always valid
+
+        if (deviceNumber.Value >= 0 && deviceNumber.Value < WaveInEvent.DeviceCount)
+        {
+            try
+            {
+                WaveInEvent.GetCapabilities(deviceNumber.Value);
+                return deviceNumber;
+            }
+            catch
+            {
+                return null; // Device index exists but GetCapabilities failed
+            }
+        }
+
+        return null; // Device index out of range
+    }
+
     private void LoadSettings()
     {
         _isLoading = true;
@@ -128,6 +197,18 @@ public partial class SettingsForm : Form
             cmbLanguage.SelectedIndex = 0;
         else
             cmbLanguage.SelectedValue = _settings.LanguageCode;
+
+        // Microphone selection — enumerate fresh on each settings open
+        var devices = EnumerateAudioDevices();
+        cmbMicrophone.DisplayMember = "Value";
+        cmbMicrophone.ValueMember = "Key";
+        cmbMicrophone.DataSource = devices;
+
+        int? validatedDevice = ValidateDeviceNumber(_settings.MicrophoneDeviceNumber);
+        if (validatedDevice == null)
+            cmbMicrophone.SelectedIndex = 0;
+        else
+            cmbMicrophone.SelectedValue = validatedDevice;
 
         _isLoading = false;
     }
@@ -234,6 +315,12 @@ public partial class SettingsForm : Form
             return;
     }
 
+    private void CmbMicrophone_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_isLoading)
+            return;
+    }
+
     private void ChkStartWithWindows_CheckedChanged(object? sender, EventArgs e)
     {
         if (_isLoading)
@@ -295,6 +382,7 @@ public partial class SettingsForm : Form
         _settings.WhisperDeployment = txtDeployment.Text.Trim();
         _settings.StartWithWindows = chkStartWithWindows.Checked;
         _settings.LanguageCode = cmbLanguage.SelectedValue as string;
+        _settings.MicrophoneDeviceNumber = cmbMicrophone.SelectedValue as int?;
 
         // Save settings
         ConfigurationService.Save(_settings);

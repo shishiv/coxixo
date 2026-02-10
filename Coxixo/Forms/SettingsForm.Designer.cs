@@ -31,6 +31,10 @@ partial class SettingsForm
     private Label lblLanguage;
     private ComboBox cmbLanguage;
 
+    // Microphone
+    private Label lblMicrophone;
+    private ComboBox cmbMicrophone;
+
     // Startup
     private CheckBox chkStartWithWindows;
 
@@ -78,6 +82,10 @@ partial class SettingsForm
         // Language controls
         lblLanguage = new Label();
         cmbLanguage = new ComboBox();
+
+        // Microphone controls
+        lblMicrophone = new Label();
+        cmbMicrophone = new ComboBox();
 
         // Startup checkbox
         chkStartWithWindows = new CheckBox();
@@ -198,29 +206,43 @@ partial class SettingsForm
         cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbLanguage.SelectedIndexChanged += CmbLanguage_SelectedIndexChanged;
 
+        // lblMicrophone
+        lblMicrophone.AutoSize = true;
+        lblMicrophone.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+        lblMicrophone.Location = new Point(12, 425);
+        lblMicrophone.Name = "lblMicrophone";
+        lblMicrophone.Text = "MICROPHONE";
+
+        // cmbMicrophone
+        cmbMicrophone.Location = new Point(12, 445);
+        cmbMicrophone.Size = new Size(280, 25);
+        cmbMicrophone.Name = "cmbMicrophone";
+        cmbMicrophone.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbMicrophone.SelectedIndexChanged += CmbMicrophone_SelectedIndexChanged;
+
         // chkStartWithWindows
-        chkStartWithWindows.Location = new Point(12, 425);
+        chkStartWithWindows.Location = new Point(12, 480);
         chkStartWithWindows.Size = new Size(280, 20);
         chkStartWithWindows.Name = "chkStartWithWindows";
         chkStartWithWindows.Text = "Start with Windows";
         chkStartWithWindows.CheckedChanged += ChkStartWithWindows_CheckedChanged;
 
         // btnCancel
-        btnCancel.Location = new Point(127, 455);
+        btnCancel.Location = new Point(127, 510);
         btnCancel.Size = new Size(80, 30);
         btnCancel.Name = "btnCancel";
         btnCancel.Text = "Cancel";
         btnCancel.Click += BtnCancel_Click;
 
         // btnSave
-        btnSave.Location = new Point(212, 455);
+        btnSave.Location = new Point(212, 510);
         btnSave.Size = new Size(80, 30);
         btnSave.Name = "btnSave";
         btnSave.Text = "Save";
         btnSave.Click += BtnSave_Click;
 
         // SettingsForm
-        this.ClientSize = new Size(304, 495);
+        this.ClientSize = new Size(304, 550);
         this.Controls.Add(pnlStatus);
         this.Controls.Add(lblHotkey);
         this.Controls.Add(hotkeyPicker);
@@ -234,6 +256,8 @@ partial class SettingsForm
         this.Controls.Add(btnTestConnection);
         this.Controls.Add(lblLanguage);
         this.Controls.Add(cmbLanguage);
+        this.Controls.Add(lblMicrophone);
+        this.Controls.Add(cmbMicrophone);
         this.Controls.Add(chkStartWithWindows);
         this.Controls.Add(btnCancel);
         this.Controls.Add(btnSave);
