@@ -36,11 +36,25 @@ public partial class SettingsForm : Form
     {
         // Form properties
         this.Text = "Coxixo Settings";
-        this.Size = new Size(320, 469);
+        this.Size = new Size(320, 524);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
         this.Font = new Font("Segoe UI", 9F);
+
+        // Populate language ComboBox before applying theme
+        var languageOptions = new List<KeyValuePair<string?, string>>
+        {
+            new(null, "Auto-detect"),
+            new("pt", "Portuguese"),
+            new("en", "English"),
+            new("es", "Spanish"),
+            new("fr", "French"),
+            new("de", "German")
+        };
+        cmbLanguage.DisplayMember = "Value";
+        cmbLanguage.ValueMember = "Key";
+        cmbLanguage.DataSource = languageOptions;
 
         ApplyDarkTheme(this);
 
@@ -80,6 +94,12 @@ public partial class SettingsForm : Form
                     btn.BackColor = DarkTheme.Surface;
                 }
             }
+            else if (child is ComboBox cmb)
+            {
+                cmb.BackColor = DarkTheme.Surface;
+                cmb.ForeColor = DarkTheme.Text;
+                cmb.FlatStyle = FlatStyle.Flat;
+            }
             else if (child is CheckBox cb)
             {
                 cb.ForeColor = DarkTheme.Text;
@@ -102,6 +122,12 @@ public partial class SettingsForm : Form
         txtApiKey.Text = CredentialService.LoadApiKey() ?? "";
         txtDeployment.Text = _settings.WhisperDeployment;
         chkStartWithWindows.Checked = StartupService.IsEnabled();
+
+        // Load language selection (null-safe)
+        if (_settings.LanguageCode == null)
+            cmbLanguage.SelectedIndex = 0;
+        else
+            cmbLanguage.SelectedValue = _settings.LanguageCode;
 
         _isLoading = false;
     }
@@ -202,6 +228,12 @@ public partial class SettingsForm : Form
         _ = TestConnectionAsync();
     }
 
+    private void CmbLanguage_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_isLoading)
+            return;
+    }
+
     private void ChkStartWithWindows_CheckedChanged(object? sender, EventArgs e)
     {
         if (_isLoading)
@@ -262,6 +294,7 @@ public partial class SettingsForm : Form
         _settings.AzureEndpoint = txtEndpoint.Text.Trim();
         _settings.WhisperDeployment = txtDeployment.Text.Trim();
         _settings.StartWithWindows = chkStartWithWindows.Checked;
+        _settings.LanguageCode = cmbLanguage.SelectedValue as string;
 
         // Save settings
         ConfigurationService.Save(_settings);

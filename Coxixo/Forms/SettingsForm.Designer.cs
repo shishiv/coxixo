@@ -27,6 +27,10 @@ partial class SettingsForm
     private Label lblDeployment;
     private TextBox txtDeployment;
 
+    // Language
+    private Label lblLanguage;
+    private ComboBox cmbLanguage;
+
     // Startup
     private CheckBox chkStartWithWindows;
 
@@ -70,6 +74,10 @@ partial class SettingsForm
         // Deployment controls
         lblDeployment = new Label();
         txtDeployment = new TextBox();
+
+        // Language controls
+        lblLanguage = new Label();
+        cmbLanguage = new ComboBox();
 
         // Startup checkbox
         chkStartWithWindows = new CheckBox();
@@ -176,29 +184,43 @@ partial class SettingsForm
         btnTestConnection.Text = "Test Connection";
         btnTestConnection.Click += BtnTestConnection_Click;
 
+        // lblLanguage
+        lblLanguage.AutoSize = true;
+        lblLanguage.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+        lblLanguage.Location = new Point(12, 370);
+        lblLanguage.Name = "lblLanguage";
+        lblLanguage.Text = "TRANSCRIPTION LANGUAGE";
+
+        // cmbLanguage
+        cmbLanguage.Location = new Point(12, 390);
+        cmbLanguage.Size = new Size(280, 25);
+        cmbLanguage.Name = "cmbLanguage";
+        cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbLanguage.SelectedIndexChanged += CmbLanguage_SelectedIndexChanged;
+
         // chkStartWithWindows
-        chkStartWithWindows.Location = new Point(12, 370);
+        chkStartWithWindows.Location = new Point(12, 425);
         chkStartWithWindows.Size = new Size(280, 20);
         chkStartWithWindows.Name = "chkStartWithWindows";
         chkStartWithWindows.Text = "Start with Windows";
         chkStartWithWindows.CheckedChanged += ChkStartWithWindows_CheckedChanged;
 
         // btnCancel
-        btnCancel.Location = new Point(127, 400);
+        btnCancel.Location = new Point(127, 455);
         btnCancel.Size = new Size(80, 30);
         btnCancel.Name = "btnCancel";
         btnCancel.Text = "Cancel";
         btnCancel.Click += BtnCancel_Click;
 
         // btnSave
-        btnSave.Location = new Point(212, 400);
+        btnSave.Location = new Point(212, 455);
         btnSave.Size = new Size(80, 30);
         btnSave.Name = "btnSave";
         btnSave.Text = "Save";
         btnSave.Click += BtnSave_Click;
 
         // SettingsForm
-        this.ClientSize = new Size(304, 440);
+        this.ClientSize = new Size(304, 495);
         this.Controls.Add(pnlStatus);
         this.Controls.Add(lblHotkey);
         this.Controls.Add(hotkeyPicker);
@@ -210,6 +232,8 @@ partial class SettingsForm
         this.Controls.Add(lblDeployment);
         this.Controls.Add(txtDeployment);
         this.Controls.Add(btnTestConnection);
+        this.Controls.Add(lblLanguage);
+        this.Controls.Add(cmbLanguage);
         this.Controls.Add(chkStartWithWindows);
         this.Controls.Add(btnCancel);
         this.Controls.Add(btnSave);
