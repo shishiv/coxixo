@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Frictionless voice input: hold a key, speak, release, paste.
-**Current focus:** Phase 7 - Language Selection
+**Current focus:** Phase 8 - Microphone Selection
 
 ## Current Position
 
-Phase: 7 of 8 (Language Selection)
+Phase: 8 of 8 (Microphone Selection)
 Plan: 1 of 1
 Status: Phase complete
-Last activity: 2026-02-10 — Phase 07 Plan 01 complete
+Last activity: 2026-02-10 — Phase 08 Plan 01 complete
 
-Progress: [███████░░░] 78% (7 of 9 phases complete, including v1.0)
+Progress: [████████░░] 89% (8 of 9 phases complete, including v1.0)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13 (9 v1.0 + 4 v1.1)
-- Average duration: 3.6 minutes (v1.1 only)
+- Total plans completed: 14 (9 v1.0 + 5 v1.1)
+- Average duration: 3.7 minutes (v1.1 only)
 - Total execution time: ~2 days (2026-01-17 → 2026-02-10)
 
 **By Phase:**
@@ -34,10 +34,11 @@ Progress: [███████░░░] 78% (7 of 9 phases complete, includin
 | 5. Hotkey Modifiers | 2 | 8m | 4m |
 | 6. Windows Startup | 1 | 2.5m | 2.5m |
 | 7. Language Selection | 1 | 3m | 3m |
+| 8. Microphone Selection | 1 | 4m | 4m |
 
 **Recent Trend:**
-- Last plan: 07-01 (3m)
-- Trend: Phase 07 complete, language selection implemented
+- Last plan: 08-01 (4m)
+- Trend: Phase 08 complete, v1.1 feature set complete
 
 *Updated after each plan completion*
 
@@ -66,6 +67,10 @@ Recent decisions affecting current work:
 - [Phase 07]: Set DisplayMember/ValueMember before DataSource to prevent spurious events
 - [Phase 07]: Use SelectedIndex=0 for null values (WinForms doesn't support SelectedValue=null)
 - [Phase 07]: Language saved on Save button click (not immediate), matching existing pattern
+- [Phase 08]: Use hybrid MMDeviceEnumerator + WaveInEvent for full device names with recording indices
+- [Phase 08]: Nullable int for MicrophoneDeviceNumber (null = system default)
+- [Phase 08]: Enumerate devices fresh on each settings open (handles USB device changes)
+- [Phase 08]: Fallback retry on BadDeviceId error (auto-retry with default device on failure)
 
 ### Pending Todos
 
@@ -78,7 +83,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Phase 07 Plan 01 complete, ready for Phase 08 (Microphone Selection)
+Stopped at: Phase 08 Plan 01 complete, v1.1 feature set complete
 Resume file: None
 
 ---
