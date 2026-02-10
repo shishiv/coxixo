@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 ## Current Position
 
 Phase: 7 of 8 (Language Selection)
-Plan: 0 of TBD
-Status: Ready to plan
-Last activity: 2026-02-10 — Phase 06 verified and complete
+Plan: 1 of 1
+Status: Phase complete
+Last activity: 2026-02-10 — Phase 07 Plan 01 complete
 
-Progress: [██████░░░░] 67% (6 of 9 phases complete, including v1.0)
+Progress: [███████░░░] 78% (7 of 9 phases complete, including v1.0)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12 (9 v1.0 + 3 v1.1)
-- Average duration: 3.7 minutes (v1.1 only)
+- Total plans completed: 13 (9 v1.0 + 4 v1.1)
+- Average duration: 3.6 minutes (v1.1 only)
 - Total execution time: ~2 days (2026-01-17 → 2026-02-10)
 
 **By Phase:**
@@ -33,10 +33,11 @@ Progress: [██████░░░░] 67% (6 of 9 phases complete, includin
 | 4. Polish | 2 | - | - |
 | 5. Hotkey Modifiers | 2 | 8m | 4m |
 | 6. Windows Startup | 1 | 2.5m | 2.5m |
+| 7. Language Selection | 1 | 3m | 3m |
 
 **Recent Trend:**
-- Last plan: 06-01 (2.5m)
-- Trend: Phase 06 complete, single-plan phase executed efficiently
+- Last plan: 07-01 (3m)
+- Trend: Phase 07 complete, language selection implemented
 
 *Updated after each plan completion*
 
@@ -61,6 +62,10 @@ Recent decisions affecting current work:
 - [Phase 06]: Immediate registry write on checkbox toggle, not deferred to Save (instant feedback)
 - [Phase 06]: Read registry state on form load as source of truth (prevents drift)
 - [Phase 06]: Use _isLoading guard to prevent re-entrant CheckedChanged during LoadSettings
+- [Phase 07]: Use nullable string for LanguageCode (null = auto-detect)
+- [Phase 07]: Set DisplayMember/ValueMember before DataSource to prevent spurious events
+- [Phase 07]: Use SelectedIndex=0 for null values (WinForms doesn't support SelectedValue=null)
+- [Phase 07]: Language saved on Save button click (not immediate), matching existing pattern
 
 ### Pending Todos
 
@@ -73,7 +78,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Phase 06 verified and complete, ready to plan Phase 07
+Stopped at: Phase 07 Plan 01 complete, ready for Phase 08 (Microphone Selection)
 Resume file: None
 
 ---
