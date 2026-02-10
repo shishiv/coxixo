@@ -76,7 +76,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — StartupService, AppSettings extension, and SettingsForm checkbox with immediate registry toggle
+- [x] 06-01: StartupService, AppSettings extension, and SettingsForm checkbox with immediate registry toggle
 
 #### Phase 7: Language Selection
 **Goal**: Users can choose transcription language or enable auto-detection
@@ -119,6 +119,6 @@ Phases execute in numeric order: 5 → 6 → 7 → 8
 | 3. Transcription | v1.0 | 2/2 | Complete | 2026-01-18 |
 | 4. Polish | v1.0 | 2/2 | Complete | 2026-01-19 |
 | 5. Hotkey Modifiers | v1.1 | 2/2 | Complete | 2026-02-09 |
-| 6. Windows Startup | v1.1 | 0/? | Not started | - |
+| 6. Windows Startup | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 7. Language Selection | v1.1 | 0/? | Not started | - |
 | 8. Microphone Selection | v1.1 | 0/? | Not started | - |
