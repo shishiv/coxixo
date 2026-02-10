@@ -102,10 +102,10 @@ Plans:
   3. System default microphone is clearly indicated in the device list
   4. Selected microphone persists across app restarts and is used on next recording
   5. App gracefully falls back to default device if selected microphone becomes unavailable
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md -- MicrophoneDeviceNumber model, hybrid device enumeration, ComboBox UI, AudioCaptureService wiring with fallback
 
 ## Progress
 
@@ -121,4 +121,4 @@ Phases execute in numeric order: 5 → 6 → 7 → 8
 | 5. Hotkey Modifiers | v1.1 | 2/2 | Complete | 2026-02-09 |
 | 6. Windows Startup | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 7. Language Selection | v1.1 | 1/1 | Complete | 2026-02-10 |
-| 8. Microphone Selection | v1.1 | 0/? | Not started | - |
+| 8. Microphone Selection | v1.1 | 0/1 | Not started | - |
