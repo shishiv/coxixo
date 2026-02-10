@@ -10,16 +10,16 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 ## Current Position
 
 Phase: 5 of 8 (Hotkey Modifiers)
-Plan: 1 of 2
-Status: Executing
-Last activity: 2026-02-10 — Completed 05-01-PLAN.md (Hotkey modifiers foundation)
+Plan: 2 of 2 (Phase complete)
+Status: Complete
+Last activity: 2026-02-10 — Completed 05-02-PLAN.md (Phase 05 complete)
 
-Progress: [████░░░░░░] 44% (4 of 9 phases complete, including v1.0)
+Progress: [█████░░░░░] 56% (5 of 9 phases complete, including v1.0)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10 (9 v1.0 + 1 v1.1)
+- Total plans completed: 11 (9 v1.0 + 2 v1.1)
 - Average duration: 4 minutes (v1.1 only)
 - Total execution time: ~2 days (2026-01-17 → 2026-02-10)
 
@@ -31,11 +31,11 @@ Progress: [████░░░░░░] 44% (4 of 9 phases complete, includin
 | 2. Audio Capture | 2 | - | - |
 | 3. Transcription | 2 | - | - |
 | 4. Polish | 2 | - | - |
-| 5. Hotkey Modifiers | 1 | 4m | 4m |
+| 5. Hotkey Modifiers | 2 | 8m | 4m |
 
 **Recent Trend:**
-- Last plan: 05-01 (4m)
-- Trend: Starting v1.1 execution
+- Last plan: 05-02 (4m)
+- Trend: Phase 05 complete, ready for Phase 06
 
 *Updated after each plan completion*
 
@@ -54,6 +54,8 @@ Recent decisions affecting current work:
 - 05-01: Fire HotkeyReleased when modifier released during hold (push-to-talk ergonomics)
 - 05-01: Implement value equality for HotkeyCombo for collection comparisons
 - 05-01: Keep TargetKey property for backward compatibility during transition
+- [Phase 05]: Use owner-drawn UserControl with GDI+ for badge rendering (avoids FlowLayoutPanel flicker)
+- [Phase 05]: Skip RegisterHotKey probe for bare keys (low-level hooks don't conflict)
 
 ### Pending Todos
 
@@ -66,7 +68,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 05-01-PLAN.md (Hotkey modifiers foundation)
+Stopped at: Completed 05-02-PLAN.md (Phase 05 complete - Hotkey Modifiers)
 Resume file: None
 
 ---
