@@ -73,10 +73,10 @@ Plans:
   1. User can toggle "Start with Windows" checkbox in settings
   2. Checkbox state immediately updates Windows startup registry (HKCU Run key)
   3. Checkbox accurately reflects current startup registration when settings window opens
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — StartupService, AppSettings extension, and SettingsForm checkbox with immediate registry toggle
 
 #### Phase 7: Language Selection
 **Goal**: Users can choose transcription language or enable auto-detection
