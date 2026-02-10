@@ -32,4 +32,10 @@ public class AppSettings
     /// Whether to play audio feedback sounds when recording starts/stops.
     /// </summary>
     public bool AudioFeedbackEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Whether the user enabled 'Start with Windows' in settings.
+    /// Note: Actual startup state is in registry - this stores user's last choice.
+    /// </summary>
+    public bool StartWithWindows { get; set; } = false;
 }
