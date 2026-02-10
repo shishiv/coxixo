@@ -62,8 +62,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: HotkeyCombo model, modifier-aware keyboard hook, and hotkey validator
-- [ ] 05-02: Badge-based hotkey picker control, settings form integration, conflict detection
+- [x] 05-01: HotkeyCombo model, modifier-aware keyboard hook, and hotkey validator
+- [x] 05-02: Badge-based hotkey picker control, settings form integration, conflict detection
 
 #### Phase 6: Windows Startup
 **Goal**: Users can configure Coxixo to launch automatically with Windows
@@ -118,7 +118,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8
 | 2. Audio Capture | v1.0 | 2/2 | Complete | 2026-01-17 |
 | 3. Transcription | v1.0 | 2/2 | Complete | 2026-01-18 |
 | 4. Polish | v1.0 | 2/2 | Complete | 2026-01-19 |
-| 5. Hotkey Modifiers | v1.1 | 0/? | Not started | - |
+| 5. Hotkey Modifiers | v1.1 | 2/2 | Complete | 2026-02-09 |
 | 6. Windows Startup | v1.1 | 0/? | Not started | - |
 | 7. Language Selection | v1.1 | 0/? | Not started | - |
 | 8. Microphone Selection | v1.1 | 0/? | Not started | - |
