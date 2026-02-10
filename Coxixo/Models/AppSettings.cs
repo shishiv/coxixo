@@ -44,4 +44,10 @@ public class AppSettings
     /// Null means auto-detect language from audio.
     /// </summary>
     public string? LanguageCode { get; set; } = null;
+
+    /// <summary>
+    /// Selected microphone device number (0-based index from WaveInEvent.DeviceCount).
+    /// Null means use system default device (DeviceNumber = 0).
+    /// </summary>
+    public int? MicrophoneDeviceNumber { get; set; } = null;
 }
