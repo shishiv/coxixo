@@ -175,7 +175,8 @@ public class TrayApplicationContext : ApplicationContext
         _transcriptionService = new TranscriptionService(
             _settings.AzureEndpoint,
             apiKey,
-            _settings.WhisperDeployment);
+            _settings.WhisperDeployment,
+            _settings.LanguageCode);
         return true;
     }
 

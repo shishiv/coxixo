@@ -38,4 +38,10 @@ public class AppSettings
     /// Note: Actual startup state is in registry - this stores user's last choice.
     /// </summary>
     public bool StartWithWindows { get; set; } = false;
+
+    /// <summary>
+    /// ISO 639-1 language code for transcription (e.g., "pt", "en", "es").
+    /// Null means auto-detect language from audio.
+    /// </summary>
+    public string? LanguageCode { get; set; } = null;
 }
