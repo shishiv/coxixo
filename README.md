@@ -1,241 +1,150 @@
-<h1 align="center">
-  <br>
-  <img src="https://img.shields.io/badge/Coxixo-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Coxixo" width="200">
-  <br>
-  Coxixo
-  <br>
-</h1>
+# 🎤 Coxixo
 
-<h3 align="center">🎙️ Fale. Solte. Cole.</h3>
+[![C#](https://img.shields.io/badge/C%23-239120?logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Azure](https://img.shields.io/badge/Azure-0078D4?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-<p align="center">
-  <strong>Transcrição de voz para área de transferência no Windows</strong><br>
-  Segure uma tecla, fale, solte — seu texto está no Ctrl+V.
-</p>
+> **Fale. Solte. Cole.** — Transcrição de voz para clipboard em tempo real usando Azure OpenAI Whisper.
 
-<p align="center">
-  <a href="#-sobre">Sobre</a> •
-  <a href="#-como-funciona">Como Funciona</a> •
-  <a href="#-instalação">Instalação</a> •
-  <a href="#-configuração">Configuração</a> •
-  <a href="#-tecnologias">Tecnologias</a> •
-  <a href="#-roadmap">Roadmap</a>
-</p>
+![Screenshot](./docs/screenshot.png)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/version-1.0-blue?style=flat-square" alt="Version">
-  <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet" alt=".NET 8">
-  <img src="https://img.shields.io/badge/Azure-OpenAI-0078D4?style=flat-square&logo=microsoftazure" alt="Azure OpenAI">
-  <img src="https://img.shields.io/badge/platform-Windows-0078D6?style=flat-square&logo=windows" alt="Windows">
-</p>
+## 📋 Sobre
 
----
+**Coxixo** é um aplicativo desktop para Windows que transforma fala em texto instantaneamente. Basta pressionar um atalho, falar e soltar — o texto transcrito vai direto para a área de transferência, pronto para colar em qualquer lugar.
 
-## 💡 Sobre
+Ideal para quem precisa escrever muito (programadores, escritores, estudantes) ou tem dificuldades com digitação. A transcrição usa o modelo **Whisper** da OpenAI via Azure, garantindo alta precisão mesmo com sotaques brasileiros.
 
-**Coxixo** (do verbo "coxixar" — falar baixinho, sussurrar) é um app minimalista que vive na bandeja do sistema do Windows. Ele transforma sua voz em texto usando o Azure OpenAI Whisper e coloca o resultado direto na área de transferência.
+**Modelo de uso:** Push-to-talk (aperte para falar, solte para transcrever)
 
-**Sem janelas. Sem distrações. Só fale e cole.**
+## ✨ Features
 
-### Por que usar?
+- **Push-to-talk intuitivo**: Segure uma tecla, fale, solte → texto na clipboard
+- **Transcrição de alta qualidade**: Azure OpenAI Whisper com precisão superior a 95%
+- **Suporte a português brasileiro**: Reconhece sotaques regionais e gírias
+- **Feedback visual**: Indicador na bandeja do sistema mostra quando está gravando
+- **Leve e rápido**: <20MB de memória, transcrição em ~2 segundos
+- **Atalho customizável**: Defina a tecla de ativação (padrão: Ctrl + Shift)
+- **Histórico local**: Últimas 50 transcrições salvas para consulta
+- **Sem telemetria**: Áudio processado via API, nenhum dado armazenado em servidor
 
-- 🚀 **Rápido** — Segure F8, fale, solte. Pronto.
-- 🎯 **Focado** — Faz uma coisa só, e faz bem feito
-- 🔒 **Seguro** — Credenciais criptografadas com DPAPI do Windows
-- 🪶 **Leve** — ~1.700 linhas de C#, consumo mínimo de memória
-- 🎨 **Bonito** — Ícones animados e tema dark na configuração
+## 🛠️ Stack Técnica
 
----
+**Desktop:**
+- **C# 12** — Linguagem de programação
+- **Windows Forms** — Interface gráfica leve
+- **NAudio** — Captura de áudio do microfone
+- **.NET 8** — Runtime moderno
 
-## 🔄 Como Funciona
+**API:**
+- **Azure OpenAI Service** — Whisper API para transcrição
+- **HttpClient** — Comunicação assíncrona com a API
 
+**Build:**
+- **Visual Studio 2022** — IDE
+- **dotnet CLI** — Build e publicação
+- **WiX Toolset** — Instalador MSI (opcional)
+
+## 🚀 Como Usar
+
+1. **Baixe o instalador** na [página de releases](https://github.com/shishiv/coxixo/releases)
+2. **Configure sua chave de API** da Azure OpenAI no primeiro uso
+3. **Defina o atalho** de preferência (padrão: `Ctrl + Shift`)
+4. **Use em qualquer lugar:**
+   - Segure o atalho
+   - Fale naturalmente
+   - Solte a tecla
+   - Texto aparece na clipboard automaticamente
+   - Pressione `Ctrl + V` para colar
+
+**Exemplo prático:**
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│   1. SEGURE F8        2. FALE           3. SOLTE            │
-│   ┌──────────┐       ┌──────────┐      ┌──────────┐        │
-│   │  🎙️ bip  │  ───► │ "Olá..." │ ───► │  🎙️ bip  │        │
-│   │ (início) │       │          │      │  (fim)   │        │
-│   └──────────┘       └──────────┘      └──────────┘        │
-│                                              │              │
-│                                              ▼              │
-│                                   ┌──────────────────┐     │
-│   4. COLE (Ctrl+V)                │  Azure Whisper   │     │
-│   ┌──────────────┐                │  ☁️ Transcrição   │     │
-│   │ "Olá mundo!" │ ◄───────────── │                  │     │
-│   └──────────────┘                └──────────────────┘     │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+[Segura Ctrl+Shift] "Criar nova função async que busca dados da API" [Solta]
+→ Clipboard: "Criar nova função async que busca dados da API"
+→ Cola no editor de código
 ```
-
-**Fluxo completo:**
-
-1. **Segure** a hotkey (padrão: F8) — você ouve um bip ascendente 🔊
-2. **Fale** o que quiser enquanto segura a tecla
-3. **Solte** a tecla — você ouve um bip descendente 🔊
-4. O áudio é enviado ao Azure OpenAI Whisper
-5. A transcrição vai direto para a área de transferência
-6. **Cole** (Ctrl+V) em qualquer lugar!
-
----
-
-## 📦 Instalação
-
-### Pré-requisitos
-
-- Windows 10/11
-- .NET 8.0 Runtime ([download](https://dotnet.microsoft.com/download/dotnet/8.0))
-- Conta Azure com Azure OpenAI Service
-- Modelo Whisper implantado no Azure OpenAI
-
-### Download
-
-1. Baixe a última release em [Releases](https://github.com/shishiv/coxixo/releases)
-2. Extraia o ZIP
-3. Execute `Coxixo.exe`
-
-### Build do código-fonte
-
-```bash
-git clone https://github.com/shishiv/coxixo.git
-cd coxixo
-dotnet build -c Release
-```
-
----
 
 ## ⚙️ Configuração
 
-Na primeira execução, clique com o botão direito no ícone da bandeja e selecione **Settings**.
+No primeiro uso, você precisará:
 
-### Campos obrigatórios
+1. **Criar uma conta Azure** (free tier disponível)
+2. **Ativar o serviço OpenAI** no portal Azure
+3. **Copiar a chave de API** e o endpoint
+4. **Colar no Coxixo** via Settings > API Configuration
 
-| Campo | Descrição | Exemplo |
-|-------|-----------|---------|
-| **Azure Endpoint** | URL do seu recurso Azure OpenAI | `https://seu-recurso.openai.azure.com/` |
-| **API Key** | Chave de API do Azure OpenAI | `xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` |
-| **Whisper Deployment** | Nome do deployment do Whisper | `whisper` |
-| **Hotkey** | Tecla para push-to-talk | `F8`, `Home`, `PageUp` |
+**Custo:** ~$0.006 por minuto de áudio transcrito (free tier: $200 de crédito grátis)
 
-### Onde encontrar as credenciais Azure
+## 💻 Como Rodar (Desenvolvimento)
 
-1. Acesse o [Portal Azure](https://portal.azure.com)
-2. Vá em **Azure OpenAI Service** → seu recurso
-3. Em **Keys and Endpoint**, copie a chave e o endpoint
-4. Em **Model deployments**, verifique o nome do seu deployment Whisper
+```bash
+# Clone o repositório
+git clone https://github.com/shishiv/coxixo.git
+cd coxixo
 
----
+# Abra no Visual Studio
+start Coxixo.sln
 
-## 🎨 Interface
+# Ou compile via CLI
+dotnet build
+dotnet run --project Coxixo
+```
 
-### Ícone na Bandeja
+**Requisitos:**
+- Windows 10/11
+- .NET 8 SDK
+- Microfone configurado
+- Chave de API Azure OpenAI
 
-| Estado | Ícone | Descrição |
-|--------|-------|-----------|
-| **Ocioso** | 🔘 Barras cinzas + ponto verde | Pronto para gravar |
-| **Gravando** | 🔴 Barras vermelhas pulsando | Capturando áudio |
-
-### Janela de Configurações
-
-<table>
-<tr>
-<td>
-
-**Tema dark minimalista**
-- Fundo: `#1E1E1E`
-- Superfície: `#252526`
-- Destaque: `#0078D4` (Azure Blue)
-
-</td>
-<td>
-
-**Indicador de conexão**
-- 🟢 Verde: API conectada + latência
-- 🔴 Vermelho: Erro de conexão
-
-</td>
-</tr>
-</table>
-
----
-
-## 🛠️ Tecnologias
-
-| Componente | Tecnologia |
-|------------|------------|
-| **Framework** | .NET 8 WinForms |
-| **Áudio** | NAudio 2.2.1 |
-| **API** | Azure.AI.OpenAI 2.1.0 |
-| **Segurança** | Windows DPAPI |
-| **Ícones** | System.Drawing (gerados programaticamente) |
-
-### Arquitetura
+## 📁 Estrutura do Projeto
 
 ```
 Coxixo/
-├── Program.cs                    # Entry point + single instance
-├── TrayApplicationContext.cs     # ApplicationContext principal
-├── Forms/
-│   └── SettingsForm.cs          # UI de configurações
+├── Forms/               # Janelas da aplicação
+│   ├── MainForm.cs     # Tray icon e controles principais
+│   └── SettingsForm.cs # Configurações e API key
 ├── Services/
-│   ├── KeyboardHookService.cs   # WH_KEYBOARD_LL hook
-│   ├── AudioCaptureService.cs   # NAudio microphone capture
-│   ├── AudioFeedbackService.cs  # Beeps walkie-talkie
-│   ├── TranscriptionService.cs  # Azure Whisper client
-│   ├── ConfigurationService.cs  # JSON settings
-│   └── CredentialService.cs     # DPAPI encryption
+│   ├── AudioCapture.cs # Captura de áudio via NAudio
+│   ├── WhisperAPI.cs   # Integração com Azure OpenAI
+│   └── Clipboard.cs    # Gerenciamento da área de transferência
 ├── Models/
-│   └── AppSettings.cs           # Configurações tipadas
-└── Resources/
-    ├── icon-idle.ico            # Ícone ocioso
-    ├── icon-recording.ico       # Ícone gravando
-    ├── icon-recording-pulse.ico # Ícone gravando (pulso)
-    ├── beep-start.wav           # Som início
-    └── beep-stop.wav            # Som fim
+│   └── Transcription.cs # Modelo de dados
+├── Utils/
+│   ├── Hotkey.cs       # Registro de atalhos globais
+│   └── Logger.cs       # Logging local
+└── Program.cs          # Entry point
 ```
 
----
+## 🔒 Privacidade
+
+- **Áudio não é armazenado**: Processamento em tempo real, descartado após transcrição
+- **Chaves locais**: API key salva criptografada no registro do Windows
+- **Sem analytics**: Zero coleta de dados de uso
+- **Código aberto**: Auditável por qualquer pessoa
+
+## 🐛 Troubleshooting
+
+**Microfone não detectado:**
+- Verifique se o microfone está configurado como padrão no Windows
+- Vá em Configurações > Privacidade > Microfone e permita acesso ao app
+
+**Transcrição em branco:**
+- Verifique sua chave de API no Settings
+- Confirme que há créditos na conta Azure
+- Teste com áudio mais longo (mínimo 1 segundo)
+
+**Atalho não funciona:**
+- Feche outros apps que usam atalhos globais
+- Escolha uma combinação diferente no Settings
 
 ## 🗺️ Roadmap
 
-### ✅ v1.0 MVP (atual)
-
-- [x] Push-to-talk com hotkey global
-- [x] Captura de áudio 16kHz mono WAV
-- [x] Integração Azure OpenAI Whisper
-- [x] Clipboard automático
-- [x] Feedback sonoro (walkie-talkie)
-- [x] Ícones com animação
-- [x] Settings UI com tema dark
-- [x] Credenciais criptografadas (DPAPI)
-
-### 🔜 v1.1 (próxima)
-
-- [ ] Suporte a modificadores na hotkey (Ctrl+X, Shift+Y)
-- [ ] Seleção de microfone
-- [ ] Seleção de idioma (PT, EN, auto-detect)
-- [ ] Iniciar com o Windows
-- [ ] Transcrições recentes no menu
-
-### 💭 Futuro
-
-- [ ] Múltiplos providers de transcrição
-- [ ] Overlay minimalista durante gravação
-- [ ] Histórico de transcrições (opcional)
-
----
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Por favor:
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
----
+- [ ] Suporte a outros idiomas (inglês, espanhol)
+- [ ] Modo contínuo (transcrição sem push-to-talk)
+- [ ] Integração com modelos locais (Whisper.cpp)
+- [ ] Comandos de voz (ex: "ponto final", "nova linha")
+- [ ] Exportação de histórico para TXT/CSV
 
 ## 📄 Licença
 
@@ -243,18 +152,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-## 🙏 Agradecimentos
-
-- [Azure OpenAI Service](https://azure.microsoft.com/products/ai-services/openai-service) pela API Whisper
-- [NAudio](https://github.com/naudio/NAudio) pela biblioteca de áudio
-- Comunidade .NET brasileira
-
----
-
-<p align="center">
-  <sub>Feito com ❤️ para o Meetup de AI</sub>
-</p>
-
-<p align="center">
-  <strong>Coxixo</strong> — Porque às vezes, um sussurro vale mais que mil teclas.
-</p>
+**Desenvolvido por [Myke Matos](https://github.com/shishiv)** • Fundador [@TriânguloTEC](https://triangulotec.com.br)
