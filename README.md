@@ -1,17 +1,17 @@
 # 🎤 Coxixo
 
-Push-to-talk voice transcription for Windows — speak, release, paste. Powered by Azure OpenAI Whisper.
+Coxixo transcribes your voice to text on Windows—just speak, release, and paste. It's powered by Azure OpenAI Whisper.
 
 ## ✨ Features
 
-- **Push-to-talk interface** — Hold hotkey, speak, release → instant clipboard paste
-- **High-quality transcription** — Azure OpenAI Whisper with 95%+ accuracy
-- **Brazilian Portuguese support** — Handles regional accents and colloquialisms
-- **System tray integration** — Lightweight, always-ready background service
-- **Custom hotkeys** — Configure your preferred activation shortcut
-- **Local history** — Last 50 transcriptions saved for reference
-- **Privacy-first** — Audio processed in real-time, not stored
-- **Fast & lightweight** — <20MB memory, ~2s transcription time
+- **Push-to-talk interface** — Hold a hotkey, speak, and let go. Done: text's on your clipboard.
+- **High-quality transcription** — Azure OpenAI Whisper gets 95%+ accuracy
+- **Brazilian Portuguese support** — Handles accents and slang.
+- **System tray integration** — Light, always ready in the background.
+- **Custom hotkeys** — Set your preferred shortcut.
+- **Local history** — The last 50 transcriptions are saved.
+- **Privacy-first** — Audio's processed live, never stored.
+- **Fast & lightweight** — Under 20MB memory, ~2s transcription time
 
 ## 🛠️ Tech Stack
 
@@ -26,9 +26,9 @@ Push-to-talk voice transcription for Windows — speak, release, paste. Powered 
 
 ## 🗺️ Roadmap
 
-- [x] **Phase 1: Windows Desktop** — Push-to-talk, Azure Whisper, clipboard integration
+- [x] **Phase 1: Windows Desktop** — Push-to-talk, Azure Whisper, clipboard
 - [ ] **Phase 2: Enhanced UX** 🚧
-  - [ ] Custom hotkey configuration UI
+  - [ ] Custom hotkey config UI
   - [ ] Audio waveform preview during recording
   - [ ] Transcription history panel with search
   - [ ] Multi-language support (English, Spanish)
@@ -57,17 +57,17 @@ Push-to-talk voice transcription for Windows — speak, release, paste. Powered 
 
 ### Installation
 
-1. Download the installer from [Releases](https://github.com/shishiv/coxixo/releases)
-2. Run setup and configure your Azure OpenAI API key
-3. Set your preferred hotkey (default: `Ctrl + Shift`)
+1.  Grab the installer from [Releases](https://github.com/shishiv/coxixo/releases)
+2.  Run setup and add your Azure OpenAI API key
+3.  Set a hotkey (default: `Ctrl + Shift`)
 
 ### Usage
 
-1. Hold your hotkey
-2. Speak naturally
-3. Release the key
-4. Text appears in clipboard automatically
-5. Paste anywhere with `Ctrl + V`
+1.  Hold your hotkey
+2.  Speak normally
+3.  Release
+4.  Text's automatically on your clipboard
+5.  Paste anywhere with `Ctrl + V`
 
 ### Development
 
@@ -89,10 +89,10 @@ dotnet run --project Coxixo
 
 ## 🔒 Privacy
 
-- Audio processed in real-time, not stored
+- Audio processed live, never stored
 - API keys encrypted locally
-- No telemetry or usage tracking
-- Open source and auditable
+- No telemetry or tracking
+- Open source
 
 ## 📄 License
 
@@ -101,3 +101,4 @@ MIT
 ---
 
 **Built by Myke Matos — TriânguloTEC**
+
