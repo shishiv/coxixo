@@ -1,155 +1,103 @@
 # 🎤 Coxixo
 
-[![C#](https://img.shields.io/badge/C%23-239120?logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-[![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Azure](https://img.shields.io/badge/Azure-0078D4?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/)
-[![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://www.microsoft.com/windows)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-> **Fale. Solte. Cole.** — Transcrição de voz para clipboard em tempo real usando Azure OpenAI Whisper.
-
-![Screenshot](./docs/screenshot.png)
-
-## 📋 Sobre
-
-**Coxixo** é um aplicativo desktop para Windows que transforma fala em texto instantaneamente. Basta pressionar um atalho, falar e soltar — o texto transcrito vai direto para a área de transferência, pronto para colar em qualquer lugar.
-
-Ideal para quem precisa escrever muito (programadores, escritores, estudantes) ou tem dificuldades com digitação. A transcrição usa o modelo **Whisper** da OpenAI via Azure, garantindo alta precisão mesmo com sotaques brasileiros.
-
-**Modelo de uso:** Push-to-talk (aperte para falar, solte para transcrever)
+Push-to-talk voice transcription for Windows — speak, release, paste. Powered by Azure OpenAI Whisper.
 
 ## ✨ Features
 
-- **Push-to-talk intuitivo**: Segure uma tecla, fale, solte → texto na clipboard
-- **Transcrição de alta qualidade**: Azure OpenAI Whisper com precisão superior a 95%
-- **Suporte a português brasileiro**: Reconhece sotaques regionais e gírias
-- **Feedback visual**: Indicador na bandeja do sistema mostra quando está gravando
-- **Leve e rápido**: <20MB de memória, transcrição em ~2 segundos
-- **Atalho customizável**: Defina a tecla de ativação (padrão: Ctrl + Shift)
-- **Histórico local**: Últimas 50 transcrições salvas para consulta
-- **Sem telemetria**: Áudio processado via API, nenhum dado armazenado em servidor
+- **Push-to-talk interface** — Hold hotkey, speak, release → instant clipboard paste
+- **High-quality transcription** — Azure OpenAI Whisper with 95%+ accuracy
+- **Brazilian Portuguese support** — Handles regional accents and colloquialisms
+- **System tray integration** — Lightweight, always-ready background service
+- **Custom hotkeys** — Configure your preferred activation shortcut
+- **Local history** — Last 50 transcriptions saved for reference
+- **Privacy-first** — Audio processed in real-time, not stored
+- **Fast & lightweight** — <20MB memory, ~2s transcription time
 
-## 🛠️ Stack Técnica
+## 🛠️ Tech Stack
 
-**Desktop:**
-- **C# 12** — Linguagem de programação
-- **Windows Forms** — Interface gráfica leve
-- **NAudio** — Captura de áudio do microfone
-- **.NET 8** — Runtime moderno
+| Layer | Technology |
+|-------|-----------|
+| **Language** | C# 12 |
+| **Framework** | .NET 8 |
+| **UI** | Windows Forms / WPF |
+| **Audio** | NAudio library |
+| **Transcription** | Azure OpenAI Whisper API |
+| **Build** | Visual Studio 2022, dotnet CLI |
 
-**API:**
-- **Azure OpenAI Service** — Whisper API para transcrição
-- **HttpClient** — Comunicação assíncrona com a API
+## 🗺️ Roadmap
 
-**Build:**
-- **Visual Studio 2022** — IDE
-- **dotnet CLI** — Build e publicação
-- **WiX Toolset** — Instalador MSI (opcional)
+- [x] **Phase 1: Windows Desktop** — Push-to-talk, Azure Whisper, clipboard integration
+- [ ] **Phase 2: Enhanced UX** 🚧
+  - [ ] Custom hotkey configuration UI
+  - [ ] Audio waveform preview during recording
+  - [ ] Transcription history panel with search
+  - [ ] Multi-language support (English, Spanish)
+- [ ] **Phase 3: Electron Migration**
+  - [ ] Cross-platform: Windows, macOS, Linux
+  - [ ] Modern UI with React/Tailwind
+  - [ ] Native system integration per OS
+  - [ ] Auto-updates
+- [ ] **Phase 4: AI Features**
+  - [ ] Real-time transcription (continuous mode)
+  - [ ] Speaker diarization
+  - [ ] Auto-summary generation
+  - [ ] Translation to multiple languages
+- [ ] **Phase 5: Integrations**
+  - [ ] Notion, Obsidian, Roam sync
+  - [ ] Slack direct messaging
+  - [ ] VS Code extension
+  - [ ] REST API for automation
+- [ ] **Phase 6: Cloud & Collaboration**
+  - [ ] Cloud sync for history
+  - [ ] Shared transcriptions
+  - [ ] Team workspaces
+  - [ ] Local Whisper.cpp support (offline mode)
 
-## 🚀 Como Usar
+## 🚀 Getting Started
 
-1. **Baixe o instalador** na [página de releases](https://github.com/shishiv/coxixo/releases)
-2. **Configure sua chave de API** da Azure OpenAI no primeiro uso
-3. **Defina o atalho** de preferência (padrão: `Ctrl + Shift`)
-4. **Use em qualquer lugar:**
-   - Segure o atalho
-   - Fale naturalmente
-   - Solte a tecla
-   - Texto aparece na clipboard automaticamente
-   - Pressione `Ctrl + V` para colar
+### Installation
 
-**Exemplo prático:**
-```
-[Segura Ctrl+Shift] "Criar nova função async que busca dados da API" [Solta]
-→ Clipboard: "Criar nova função async que busca dados da API"
-→ Cola no editor de código
-```
+1. Download the installer from [Releases](https://github.com/shishiv/coxixo/releases)
+2. Run setup and configure your Azure OpenAI API key
+3. Set your preferred hotkey (default: `Ctrl + Shift`)
 
-## ⚙️ Configuração
+### Usage
 
-No primeiro uso, você precisará:
+1. Hold your hotkey
+2. Speak naturally
+3. Release the key
+4. Text appears in clipboard automatically
+5. Paste anywhere with `Ctrl + V`
 
-1. **Criar uma conta Azure** (free tier disponível)
-2. **Ativar o serviço OpenAI** no portal Azure
-3. **Copiar a chave de API** e o endpoint
-4. **Colar no Coxixo** via Settings > API Configuration
-
-**Custo:** ~$0.006 por minuto de áudio transcrito (free tier: $200 de crédito grátis)
-
-## 💻 Como Rodar (Desenvolvimento)
+### Development
 
 ```bash
-# Clone o repositório
+# Clone repository
 git clone https://github.com/shishiv/coxixo.git
 cd coxixo
 
-# Abra no Visual Studio
-start Coxixo.sln
-
-# Ou compile via CLI
+# Build and run
 dotnet build
 dotnet run --project Coxixo
 ```
 
-**Requisitos:**
+**Requirements:**
 - Windows 10/11
 - .NET 8 SDK
-- Microfone configurado
-- Chave de API Azure OpenAI
+- Azure OpenAI API key
+- Microphone
 
-## 📁 Estrutura do Projeto
+## 🔒 Privacy
 
-```
-Coxixo/
-├── Forms/               # Janelas da aplicação
-│   ├── MainForm.cs     # Tray icon e controles principais
-│   └── SettingsForm.cs # Configurações e API key
-├── Services/
-│   ├── AudioCapture.cs # Captura de áudio via NAudio
-│   ├── WhisperAPI.cs   # Integração com Azure OpenAI
-│   └── Clipboard.cs    # Gerenciamento da área de transferência
-├── Models/
-│   └── Transcription.cs # Modelo de dados
-├── Utils/
-│   ├── Hotkey.cs       # Registro de atalhos globais
-│   └── Logger.cs       # Logging local
-└── Program.cs          # Entry point
-```
+- Audio processed in real-time, not stored
+- API keys encrypted locally
+- No telemetry or usage tracking
+- Open source and auditable
 
-## 🔒 Privacidade
+## 📄 License
 
-- **Áudio não é armazenado**: Processamento em tempo real, descartado após transcrição
-- **Chaves locais**: API key salva criptografada no registro do Windows
-- **Sem analytics**: Zero coleta de dados de uso
-- **Código aberto**: Auditável por qualquer pessoa
-
-## 🐛 Troubleshooting
-
-**Microfone não detectado:**
-- Verifique se o microfone está configurado como padrão no Windows
-- Vá em Configurações > Privacidade > Microfone e permita acesso ao app
-
-**Transcrição em branco:**
-- Verifique sua chave de API no Settings
-- Confirme que há créditos na conta Azure
-- Teste com áudio mais longo (mínimo 1 segundo)
-
-**Atalho não funciona:**
-- Feche outros apps que usam atalhos globais
-- Escolha uma combinação diferente no Settings
-
-## 🗺️ Roadmap
-
-- [ ] Suporte a outros idiomas (inglês, espanhol)
-- [ ] Modo contínuo (transcrição sem push-to-talk)
-- [ ] Integração com modelos locais (Whisper.cpp)
-- [ ] Comandos de voz (ex: "ponto final", "nova linha")
-- [ ] Exportação de histórico para TXT/CSV
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+MIT
 
 ---
 
-**Desenvolvido por [Myke Matos](https://github.com/shishiv)** • Fundador [@TriânguloTEC](https://triangulotec.com.br)
+**Built by Myke Matos — TriânguloTEC**
