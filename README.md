@@ -4,13 +4,13 @@ Coxixo transcribes your voice to text on Windows—just speak, release, and past
 
 ## ✨ Features
 
-- **Push-to-talk interface** — Hold a hotkey, speak, and let go. Done: text's on your clipboard.
-- **High-quality transcription** — Azure OpenAI Whisper gets 95%+ accuracy
-- **Brazilian Portuguese support** — Handles accents and slang.
-- **System tray integration** — Light, always ready in the background.
-- **Custom hotkeys** — Set your preferred shortcut.
-- **Local history** — The last 50 transcriptions are saved.
-- **Privacy-first** — Audio's processed live, never stored.
+- **Push-to-talk interface** — Hold the hotkey, speak, and release. Boom—instant clipboard paste.
+- **High-quality transcription** — Azure OpenAI Whisper? It's got 95%+ accuracy.
+- **Brazilian Portuguese support** — It even gets regional accents and slang.
+- **System tray integration** — A lightweight background service that's always ready.
+- **Custom hotkeys** — Pick your go-to activation shortcut.
+- **Local history** — Your last 50 transcriptions are saved.
+- **Privacy-first** — Audio's processed instantly, and never saved.
 - **Fast & lightweight** — Under 20MB memory, ~2s transcription time
 
 ## 🛠️ Tech Stack
