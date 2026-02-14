@@ -1,8 +1,8 @@
-# 🎤 Coxixo
+# <img src="https://unpkg.com/lucide-static@latest/icons/mic.svg" width="32" height="32" alt="Coxixo"> Coxixo
 
 Coxixo transcribes your voice to text on Windows—just speak, release, and paste. It's powered by Azure OpenAI Whisper.
 
-## ✨ Features
+## <img src="https://unpkg.com/lucide-static@latest/icons/sparkles.svg" width="20" height="20" alt="Features"> Features
 
 - **Push-to-talk interface** — Hold the hotkey, speak, and release. Boom—instant clipboard paste.
 - **High-quality transcription** — Azure OpenAI Whisper? It's got 95%+ accuracy.
@@ -13,7 +13,7 @@ Coxixo transcribes your voice to text on Windows—just speak, release, and past
 - **Privacy-first** — Audio's processed instantly, and never saved.
 - **Fast & lightweight** — Under 20MB memory, ~2s transcription time
 
-## 🛠️ Tech Stack
+## <img src="https://unpkg.com/lucide-static@latest/icons/layers.svg" width="20" height="20" alt="Tech Stack"> Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -24,7 +24,7 @@ Coxixo transcribes your voice to text on Windows—just speak, release, and past
 | **Transcription** | Azure OpenAI Whisper API |
 | **Build** | Visual Studio 2022, dotnet CLI |
 
-## 🗺️ Roadmap
+## <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" width="20" height="20" alt="Roadmap"> Roadmap
 
 - [x] **Phase 1: Windows Desktop** — Push-to-talk, Azure Whisper, clipboard
 - [ ] **Phase 2: Enhanced UX** 🚧
@@ -53,7 +53,7 @@ Coxixo transcribes your voice to text on Windows—just speak, release, and past
   - [ ] Team workspaces
   - [ ] Local Whisper.cpp support (offline mode)
 
-## 🚀 Getting Started
+## <img src="https://unpkg.com/lucide-static@latest/icons/rocket.svg" width="20" height="20" alt="Getting Started"> Getting Started
 
 ### Installation
 
