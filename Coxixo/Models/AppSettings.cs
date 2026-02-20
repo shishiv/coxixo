@@ -9,9 +9,9 @@ namespace Coxixo.Models;
 public class AppSettings
 {
     /// <summary>
-    /// The key used for push-to-talk. Default is F8.
+    /// The hotkey combination used for push-to-talk. Default is F8 with no modifiers.
     /// </summary>
-    public Keys HotkeyKey { get; set; } = Keys.F8;
+    public HotkeyCombo Hotkey { get; set; } = HotkeyCombo.Default();
 
     /// <summary>
     /// Azure OpenAI endpoint URL (e.g., https://xxx.openai.azure.com/)
@@ -32,4 +32,22 @@ public class AppSettings
     /// Whether to play audio feedback sounds when recording starts/stops.
     /// </summary>
     public bool AudioFeedbackEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Whether the user enabled 'Start with Windows' in settings.
+    /// Note: Actual startup state is in registry - this stores user's last choice.
+    /// </summary>
+    public bool StartWithWindows { get; set; } = false;
+
+    /// <summary>
+    /// ISO 639-1 language code for transcription (e.g., "pt", "en", "es").
+    /// Null means auto-detect language from audio.
+    /// </summary>
+    public string? LanguageCode { get; set; } = null;
+
+    /// <summary>
+    /// Selected microphone device number (0-based index from WaveInEvent.DeviceCount).
+    /// Null means use system default device (DeviceNumber = 0).
+    /// </summary>
+    public int? MicrophoneDeviceNumber { get; set; } = null;
 }

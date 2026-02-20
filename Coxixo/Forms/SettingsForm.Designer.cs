@@ -12,7 +12,8 @@ partial class SettingsForm
 
     // Hotkey
     private Label lblHotkey;
-    private TextBox txtHotkey;
+    private Controls.HotkeyPickerControl hotkeyPicker;
+    private Label lblHotkeyMessage;
 
     // Azure Endpoint
     private Label lblEndpoint;
@@ -25,6 +26,17 @@ partial class SettingsForm
     // Deployment
     private Label lblDeployment;
     private TextBox txtDeployment;
+
+    // Language
+    private Label lblLanguage;
+    private ComboBox cmbLanguage;
+
+    // Microphone
+    private Label lblMicrophone;
+    private ComboBox cmbMicrophone;
+
+    // Startup
+    private CheckBox chkStartWithWindows;
 
     // Buttons
     private Button btnTestConnection;
@@ -52,7 +64,8 @@ partial class SettingsForm
 
         // Hotkey controls
         lblHotkey = new Label();
-        txtHotkey = new TextBox();
+        hotkeyPicker = new Controls.HotkeyPickerControl();
+        lblHotkeyMessage = new Label();
 
         // Endpoint controls
         lblEndpoint = new Label();
@@ -65,6 +78,17 @@ partial class SettingsForm
         // Deployment controls
         lblDeployment = new Label();
         txtDeployment = new TextBox();
+
+        // Language controls
+        lblLanguage = new Label();
+        cmbLanguage = new ComboBox();
+
+        // Microphone controls
+        lblMicrophone = new Label();
+        cmbMicrophone = new ComboBox();
+
+        // Startup checkbox
+        chkStartWithWindows = new CheckBox();
 
         // Buttons
         btnTestConnection = new Button();
@@ -111,37 +135,40 @@ partial class SettingsForm
         lblHotkey.Name = "lblHotkey";
         lblHotkey.Text = "HOTKEY";
 
-        // txtHotkey
-        txtHotkey.Location = new Point(12, 105);
-        txtHotkey.Size = new Size(280, 25);
-        txtHotkey.Name = "txtHotkey";
-        txtHotkey.ReadOnly = true;
-        txtHotkey.Cursor = Cursors.Hand;
-        txtHotkey.Enter += TxtHotkey_Enter;
-        txtHotkey.Leave += TxtHotkey_Leave;
-        txtHotkey.KeyDown += TxtHotkey_KeyDown;
+        // hotkeyPicker
+        hotkeyPicker.Location = new Point(12, 105);
+        hotkeyPicker.Size = new Size(280, 32);
+        hotkeyPicker.Name = "hotkeyPicker";
+
+        // lblHotkeyMessage (validation feedback below picker)
+        lblHotkeyMessage.Location = new Point(12, 140);
+        lblHotkeyMessage.Size = new Size(280, 16);
+        lblHotkeyMessage.Font = new Font("Segoe UI", 7.5F);
+        lblHotkeyMessage.Name = "lblHotkeyMessage";
+        lblHotkeyMessage.Text = "";
+        lblHotkeyMessage.Visible = false;
 
         // lblEndpoint
         lblEndpoint.AutoSize = true;
         lblEndpoint.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-        lblEndpoint.Location = new Point(12, 145);
+        lblEndpoint.Location = new Point(12, 160);
         lblEndpoint.Name = "lblEndpoint";
         lblEndpoint.Text = "AZURE ENDPOINT";
 
         // txtEndpoint
-        txtEndpoint.Location = new Point(12, 165);
+        txtEndpoint.Location = new Point(12, 180);
         txtEndpoint.Size = new Size(280, 25);
         txtEndpoint.Name = "txtEndpoint";
 
         // lblApiKey
         lblApiKey.AutoSize = true;
         lblApiKey.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-        lblApiKey.Location = new Point(12, 205);
+        lblApiKey.Location = new Point(12, 220);
         lblApiKey.Name = "lblApiKey";
         lblApiKey.Text = "API KEY";
 
         // txtApiKey
-        txtApiKey.Location = new Point(12, 225);
+        txtApiKey.Location = new Point(12, 240);
         txtApiKey.Size = new Size(280, 25);
         txtApiKey.Name = "txtApiKey";
         txtApiKey.UseSystemPasswordChar = true;
@@ -149,41 +176,77 @@ partial class SettingsForm
         // lblDeployment
         lblDeployment.AutoSize = true;
         lblDeployment.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-        lblDeployment.Location = new Point(12, 265);
+        lblDeployment.Location = new Point(12, 280);
         lblDeployment.Name = "lblDeployment";
         lblDeployment.Text = "DEPLOYMENT NAME";
 
         // txtDeployment
-        txtDeployment.Location = new Point(12, 285);
+        txtDeployment.Location = new Point(12, 300);
         txtDeployment.Size = new Size(280, 25);
         txtDeployment.Name = "txtDeployment";
 
         // btnTestConnection
-        btnTestConnection.Location = new Point(12, 320);
+        btnTestConnection.Location = new Point(12, 335);
         btnTestConnection.Size = new Size(110, 25);
         btnTestConnection.Name = "btnTestConnection";
         btnTestConnection.Text = "Test Connection";
         btnTestConnection.Click += BtnTestConnection_Click;
 
+        // lblLanguage
+        lblLanguage.AutoSize = true;
+        lblLanguage.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+        lblLanguage.Location = new Point(12, 370);
+        lblLanguage.Name = "lblLanguage";
+        lblLanguage.Text = "TRANSCRIPTION LANGUAGE";
+
+        // cmbLanguage
+        cmbLanguage.Location = new Point(12, 390);
+        cmbLanguage.Size = new Size(280, 25);
+        cmbLanguage.Name = "cmbLanguage";
+        cmbLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbLanguage.SelectedIndexChanged += CmbLanguage_SelectedIndexChanged;
+
+        // lblMicrophone
+        lblMicrophone.AutoSize = true;
+        lblMicrophone.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+        lblMicrophone.Location = new Point(12, 425);
+        lblMicrophone.Name = "lblMicrophone";
+        lblMicrophone.Text = "MICROPHONE";
+
+        // cmbMicrophone
+        cmbMicrophone.Location = new Point(12, 445);
+        cmbMicrophone.Size = new Size(280, 25);
+        cmbMicrophone.Name = "cmbMicrophone";
+        cmbMicrophone.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbMicrophone.SelectedIndexChanged += CmbMicrophone_SelectedIndexChanged;
+
+        // chkStartWithWindows
+        chkStartWithWindows.Location = new Point(12, 480);
+        chkStartWithWindows.Size = new Size(280, 20);
+        chkStartWithWindows.Name = "chkStartWithWindows";
+        chkStartWithWindows.Text = "Start with Windows";
+        chkStartWithWindows.CheckedChanged += ChkStartWithWindows_CheckedChanged;
+
         // btnCancel
-        btnCancel.Location = new Point(127, 350);
+        btnCancel.Location = new Point(127, 510);
         btnCancel.Size = new Size(80, 30);
         btnCancel.Name = "btnCancel";
         btnCancel.Text = "Cancel";
         btnCancel.Click += BtnCancel_Click;
 
         // btnSave
-        btnSave.Location = new Point(212, 350);
+        btnSave.Location = new Point(212, 510);
         btnSave.Size = new Size(80, 30);
         btnSave.Name = "btnSave";
         btnSave.Text = "Save";
         btnSave.Click += BtnSave_Click;
 
         // SettingsForm
-        this.ClientSize = new Size(304, 391);
+        this.ClientSize = new Size(304, 550);
         this.Controls.Add(pnlStatus);
         this.Controls.Add(lblHotkey);
-        this.Controls.Add(txtHotkey);
+        this.Controls.Add(hotkeyPicker);
+        this.Controls.Add(lblHotkeyMessage);
         this.Controls.Add(lblEndpoint);
         this.Controls.Add(txtEndpoint);
         this.Controls.Add(lblApiKey);
@@ -191,6 +254,11 @@ partial class SettingsForm
         this.Controls.Add(lblDeployment);
         this.Controls.Add(txtDeployment);
         this.Controls.Add(btnTestConnection);
+        this.Controls.Add(lblLanguage);
+        this.Controls.Add(cmbLanguage);
+        this.Controls.Add(lblMicrophone);
+        this.Controls.Add(cmbMicrophone);
+        this.Controls.Add(chkStartWithWindows);
         this.Controls.Add(btnCancel);
         this.Controls.Add(btnSave);
         this.Name = "SettingsForm";

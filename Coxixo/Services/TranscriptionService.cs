@@ -12,6 +12,7 @@ public sealed class TranscriptionService : IDisposable
 {
     private readonly AzureOpenAIClient _client;
     private readonly AudioClient _audioClient;
+    private readonly string? _languageCode;
     private bool _disposed;
 
     /// <summary>
@@ -20,7 +21,8 @@ public sealed class TranscriptionService : IDisposable
     /// <param name="endpoint">Azure OpenAI endpoint URL (e.g., https://xxx.openai.azure.com/)</param>
     /// <param name="apiKey">Azure OpenAI API key</param>
     /// <param name="deployment">Whisper deployment name</param>
-    public TranscriptionService(string endpoint, string apiKey, string deployment)
+    /// <param name="languageCode">ISO 639-1 language code (e.g., "pt", "en"). Null for auto-detect.</param>
+    public TranscriptionService(string endpoint, string apiKey, string deployment, string? languageCode = null)
     {
         if (string.IsNullOrEmpty(endpoint))
             throw new ArgumentException("Endpoint is required", nameof(endpoint));
@@ -31,6 +33,7 @@ public sealed class TranscriptionService : IDisposable
 
         _client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
         _audioClient = _client.GetAudioClient(deployment);
+        _languageCode = languageCode;
     }
 
     /// <summary>
@@ -51,7 +54,7 @@ public sealed class TranscriptionService : IDisposable
         var options = new AudioTranscriptionOptions
         {
             ResponseFormat = AudioTranscriptionFormat.Text,
-            Language = "pt"  // Portuguese (per PROJECT.md)
+            Language = _languageCode
         };
 
         var result = await _audioClient.TranscribeAudioAsync(stream, "audio.wav", options, ct);

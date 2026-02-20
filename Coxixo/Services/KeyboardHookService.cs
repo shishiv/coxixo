@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Coxixo.Models;
 
 namespace Coxixo.Services;
 
@@ -15,6 +16,11 @@ public sealed class KeyboardHookService : IDisposable
     private const int WM_KEYUP = 0x0101;
     private const int WM_SYSKEYDOWN = 0x0104;
     private const int WM_SYSKEYUP = 0x0105;
+
+    // Virtual key codes for modifier keys
+    private const int VK_CONTROL = 0x11;
+    private const int VK_SHIFT = 0x10;
+    private const int VK_MENU = 0x12; // Alt
 
     /// <summary>
     /// Fired when the target hotkey is pressed (key down).
@@ -32,7 +38,7 @@ public sealed class KeyboardHookService : IDisposable
     // IMPORTANT: Store delegate in field to prevent garbage collection
     private readonly LowLevelKeyboardProc _proc;
     private IntPtr _hookId = IntPtr.Zero;
-    private Keys _targetKey = Keys.F8;  // Default hotkey, will be configurable
+    private HotkeyCombo _targetCombo = HotkeyCombo.Default();
     private bool _isKeyDown = false;
     private bool _disposed = false;
 
@@ -42,13 +48,23 @@ public sealed class KeyboardHookService : IDisposable
     }
 
     /// <summary>
-    /// Gets or sets the target key to monitor for push-to-talk.
-    /// Default is F8.
+    /// Gets or sets the target hotkey combination to monitor for push-to-talk.
+    /// Default is F8 with no modifiers.
+    /// </summary>
+    public HotkeyCombo TargetCombo
+    {
+        get => _targetCombo;
+        set => _targetCombo = value ?? HotkeyCombo.Default();
+    }
+
+    /// <summary>
+    /// Legacy property for backward compatibility during transition.
+    /// Sets the target key with no modifiers.
     /// </summary>
     public Keys TargetKey
     {
-        get => _targetKey;
-        set => _targetKey = value;
+        get => _targetCombo.Key;
+        set => _targetCombo = new HotkeyCombo { Key = value };
     }
 
     /// <summary>
@@ -95,28 +111,74 @@ public sealed class KeyboardHookService : IDisposable
             GetModuleHandle(curModule.ModuleName), 0);
     }
 
+    /// <summary>
+    /// Checks if a modifier key is currently pressed using GetKeyState.
+    /// Uses GetKeyState (not GetAsyncKeyState) for hook message queue synchronization.
+    /// </summary>
+    private static bool IsKeyDown(int vk) => (GetKeyState(vk) & 0x8000) != 0;
+
     private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
         if (nCode >= 0)
         {
             int vkCode = Marshal.ReadInt32(lParam);
             var key = (Keys)vkCode;
+            var msg = wParam.ToInt32();
 
-            if (key == _targetKey)
+            // Check if this is the target key
+            if (key == _targetCombo.Key)
             {
-                var msg = wParam.ToInt32();
+                // Check if modifier state matches exactly
+                bool ctrlDown = IsKeyDown(VK_CONTROL);
+                bool altDown = IsKeyDown(VK_MENU);
+                bool shiftDown = IsKeyDown(VK_SHIFT);
 
-                // Key pressed (not already down - prevents auto-repeat flood)
-                if ((msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN) && !_isKeyDown)
+                bool modifiersMatch = ctrlDown == _targetCombo.Ctrl
+                                   && altDown == _targetCombo.Alt
+                                   && shiftDown == _targetCombo.Shift;
+
+                if (modifiersMatch)
                 {
-                    _isKeyDown = true;
-                    HotkeyPressed?.Invoke(this, EventArgs.Empty);
+                    // Key pressed (not already down - prevents auto-repeat flood)
+                    if ((msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN) && !_isKeyDown)
+                    {
+                        _isKeyDown = true;
+                        HotkeyPressed?.Invoke(this, EventArgs.Empty);
+                    }
+                    // Key released
+                    else if ((msg == WM_KEYUP || msg == WM_SYSKEYUP) && _isKeyDown)
+                    {
+                        _isKeyDown = false;
+                        HotkeyReleased?.Invoke(this, EventArgs.Empty);
+                    }
                 }
-                // Key released
-                else if ((msg == WM_KEYUP || msg == WM_SYSKEYUP) && _isKeyDown)
+            }
+
+            // Handle modifier key release during active hotkey hold
+            // If user releases a required modifier before releasing the main key,
+            // treat it as a release event (critical for push-to-talk ergonomics)
+            if (_isKeyDown && (msg == WM_KEYUP || msg == WM_SYSKEYUP))
+            {
+                bool isModifierRelease = key == Keys.ControlKey || key == Keys.LControlKey || key == Keys.RControlKey
+                                      || key == Keys.ShiftKey || key == Keys.LShiftKey || key == Keys.RShiftKey
+                                      || key == Keys.Menu || key == Keys.LMenu || key == Keys.RMenu;
+
+                if (isModifierRelease)
                 {
-                    _isKeyDown = false;
-                    HotkeyReleased?.Invoke(this, EventArgs.Empty);
+                    // Re-check if modifiers still match; if not, fire release
+                    bool ctrlDown = IsKeyDown(VK_CONTROL);
+                    bool altDown = IsKeyDown(VK_MENU);
+                    bool shiftDown = IsKeyDown(VK_SHIFT);
+
+                    bool stillMatch = ctrlDown == _targetCombo.Ctrl
+                                   && altDown == _targetCombo.Alt
+                                   && shiftDown == _targetCombo.Shift;
+
+                    if (!stillMatch)
+                    {
+                        _isKeyDown = false;
+                        HotkeyReleased?.Invoke(this, EventArgs.Empty);
+                    }
                 }
             }
         }
@@ -145,4 +207,7 @@ public sealed class KeyboardHookService : IDisposable
 
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+    [DllImport("user32.dll")]
+    private static extern short GetKeyState(int nVirtKey);
 }

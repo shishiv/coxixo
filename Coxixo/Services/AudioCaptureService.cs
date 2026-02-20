@@ -53,9 +53,10 @@ public sealed class AudioCaptureService : IDisposable
     public TimeSpan LastRecordingDuration { get; private set; }
 
     /// <summary>
-    /// Starts capturing audio from the default microphone.
+    /// Starts capturing audio from the specified microphone.
     /// </summary>
-    public void StartCapture()
+    /// <param name="deviceNumber">Device number (0-based index), or null for system default.</param>
+    public void StartCapture(int? deviceNumber = null)
     {
         if (_isRecording)
             return;
@@ -69,6 +70,7 @@ public sealed class AudioCaptureService : IDisposable
 
             _waveIn = new WaveInEvent
             {
+                DeviceNumber = deviceNumber ?? 0,
                 WaveFormat = waveFormat,
                 BufferMilliseconds = 50  // Low latency buffer
             };
@@ -88,12 +90,18 @@ public sealed class AudioCaptureService : IDisposable
             CleanupRecording();
             var message = ex.Result switch
             {
-                NAudio.MmResult.BadDeviceId => "No microphone found. Check your audio devices.",
+                NAudio.MmResult.BadDeviceId => "Selected microphone not found. Falling back to default device.",
                 NAudio.MmResult.NoDriver => "No audio driver installed.",
                 NAudio.MmResult.NotEnabled => "Microphone access denied. Check Windows privacy settings.",
                 _ => $"Microphone error: {ex.Message}"
             };
             CaptureError?.Invoke(this, message);
+
+            // Fallback: if specific device failed, retry with default device
+            if (ex.Result == NAudio.MmResult.BadDeviceId && deviceNumber != null)
+            {
+                StartCapture(null);
+            }
         }
         catch (Exception ex)
         {

@@ -1,7 +1,11 @@
 using System.Diagnostics;
 using System.Net.Http;
+using System.Runtime.InteropServices;
+using Coxixo.Controls;
 using Coxixo.Models;
 using Coxixo.Services;
+using NAudio.Wave;
+using NAudio.CoreAudioApi;
 
 namespace Coxixo.Forms;
 
@@ -19,9 +23,8 @@ public partial class SettingsForm : Form
         public static readonly Color Error = Color.FromArgb(0xE8, 0x11, 0x23);
     }
 
-    private Keys _selectedKey;
     private AppSettings _settings = null!; // Initialized in LoadSettings() called from constructor
-    private bool _isCapturingHotkey = false;
+    private bool _isLoading;
 
     public SettingsForm()
     {
@@ -35,13 +38,29 @@ public partial class SettingsForm : Form
     {
         // Form properties
         this.Text = "Coxixo Settings";
-        this.Size = new Size(320, 420);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
         this.Font = new Font("Segoe UI", 9F);
 
+        // Populate language ComboBox before applying theme
+        var languageOptions = new List<KeyValuePair<string?, string>>
+        {
+            new(null, "Auto-detect"),
+            new("pt", "Portuguese"),
+            new("en", "English"),
+            new("es", "Spanish"),
+            new("fr", "French"),
+            new("de", "German")
+        };
+        cmbLanguage.DisplayMember = "Value";
+        cmbLanguage.ValueMember = "Key";
+        cmbLanguage.DataSource = languageOptions;
+
         ApplyDarkTheme(this);
+
+        // Wire up validation message display
+        hotkeyPicker.ValidationChanged += OnHotkeyValidationChanged;
     }
 
     private void ApplyDarkTheme(Control control)
@@ -51,7 +70,12 @@ public partial class SettingsForm : Form
 
         foreach (Control child in control.Controls)
         {
-            if (child is TextBox tb)
+            if (child is HotkeyPickerControl)
+            {
+                // HotkeyPickerControl handles its own painting - skip theme override
+                continue;
+            }
+            else if (child is TextBox tb)
             {
                 tb.BackColor = DarkTheme.Surface;
                 tb.ForeColor = DarkTheme.Text;
@@ -71,6 +95,16 @@ public partial class SettingsForm : Form
                     btn.BackColor = DarkTheme.Surface;
                 }
             }
+            else if (child is ComboBox cmb)
+            {
+                cmb.BackColor = DarkTheme.Surface;
+                cmb.ForeColor = DarkTheme.Text;
+                cmb.FlatStyle = FlatStyle.Flat;
+            }
+            else if (child is CheckBox cb)
+            {
+                cb.ForeColor = DarkTheme.Text;
+            }
             else if (child is Panel panel)
             {
                 panel.BackColor = DarkTheme.Surface;
@@ -79,61 +113,119 @@ public partial class SettingsForm : Form
         }
     }
 
+    private List<KeyValuePair<int?, string>> EnumerateAudioDevices()
+    {
+        var devices = new List<KeyValuePair<int?, string>>
+        {
+            new(null, "System Default")
+        };
+
+        try
+        {
+            // Hybrid enumeration: Use CoreAudio for full names, match with WaveInEvent indices
+            using var enumerator = new MMDeviceEnumerator();
+            var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console);
+            var activeDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+
+            for (int i = 0; i < WaveInEvent.DeviceCount; i++)
+            {
+                var caps = WaveInEvent.GetCapabilities(i);
+                var displayName = caps.ProductName;
+
+                // Try to match with MMDevice for full friendly name
+                var matchedDevice = activeDevices.FirstOrDefault(d =>
+                    d.FriendlyName.StartsWith(caps.ProductName, StringComparison.OrdinalIgnoreCase));
+
+                if (matchedDevice != null)
+                {
+                    displayName = matchedDevice.FriendlyName;
+                    if (matchedDevice.ID == defaultDevice.ID)
+                        displayName += " (System Default)";
+                }
+
+                devices.Add(new(i, displayName));
+            }
+        }
+        catch
+        {
+            // Fallback: use basic WaveInEvent enumeration
+            for (int i = 0; i < WaveInEvent.DeviceCount; i++)
+            {
+                var caps = WaveInEvent.GetCapabilities(i);
+                devices.Add(new(i, caps.ProductName));
+            }
+        }
+
+        return devices;
+    }
+
+    private int? ValidateDeviceNumber(int? deviceNumber)
+    {
+        if (deviceNumber == null)
+            return null; // System default always valid
+
+        if (deviceNumber.Value >= 0 && deviceNumber.Value < WaveInEvent.DeviceCount)
+        {
+            try
+            {
+                WaveInEvent.GetCapabilities(deviceNumber.Value);
+                return deviceNumber;
+            }
+            catch
+            {
+                return null; // Device index exists but GetCapabilities failed
+            }
+        }
+
+        return null; // Device index out of range
+    }
+
     private void LoadSettings()
     {
-        _settings = ConfigurationService.Load();
-        _selectedKey = _settings.HotkeyKey;
+        _isLoading = true;
 
-        txtHotkey.Text = _selectedKey.ToString();
+        _settings = ConfigurationService.Load();
+        hotkeyPicker.SelectedCombo = _settings.Hotkey;
         txtEndpoint.Text = _settings.AzureEndpoint;
         txtApiKey.Text = CredentialService.LoadApiKey() ?? "";
         txtDeployment.Text = _settings.WhisperDeployment;
+        chkStartWithWindows.Checked = StartupService.IsEnabled();
+
+        // Load language selection (null-safe)
+        if (_settings.LanguageCode == null)
+            cmbLanguage.SelectedIndex = 0;
+        else
+            cmbLanguage.SelectedValue = _settings.LanguageCode;
+
+        // Microphone selection — enumerate fresh on each settings open
+        var devices = EnumerateAudioDevices();
+        cmbMicrophone.DisplayMember = "Value";
+        cmbMicrophone.ValueMember = "Key";
+        cmbMicrophone.DataSource = devices;
+
+        int? validatedDevice = ValidateDeviceNumber(_settings.MicrophoneDeviceNumber);
+        if (validatedDevice == null)
+            cmbMicrophone.SelectedIndex = 0;
+        else
+            cmbMicrophone.SelectedValue = validatedDevice;
+
+        _isLoading = false;
     }
 
-    private void TxtHotkey_Enter(object? sender, EventArgs e)
+    private void OnHotkeyValidationChanged(object? sender, EventArgs e)
     {
-        _isCapturingHotkey = true;
-        txtHotkey.Text = "Press a key...";
-    }
-
-    private void TxtHotkey_Leave(object? sender, EventArgs e)
-    {
-        _isCapturingHotkey = false;
-        txtHotkey.Text = _selectedKey.ToString();
-    }
-
-    private void TxtHotkey_KeyDown(object? sender, KeyEventArgs e)
-    {
-        if (!_isCapturingHotkey) return;
-
-        e.Handled = true;
-        e.SuppressKeyPress = true;
-
-        // Ignore modifier-only presses
-        if (e.KeyCode == Keys.ControlKey || e.KeyCode == Keys.ShiftKey ||
-            e.KeyCode == Keys.Menu || e.KeyCode == Keys.LWin || e.KeyCode == Keys.RWin)
-            return;
-
-        _selectedKey = e.KeyCode;
-        txtHotkey.Text = _selectedKey.ToString();
-        _isCapturingHotkey = false;
-    }
-
-    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-    {
-        // Allow Tab and other navigation keys to be captured as hotkey
-        if (_isCapturingHotkey && txtHotkey.Focused)
+        if (hotkeyPicker.ValidationMessage != null)
         {
-            var key = keyData & Keys.KeyCode;
-            if (key != Keys.None && key != Keys.ControlKey && key != Keys.ShiftKey && key != Keys.Menu)
-            {
-                _selectedKey = key;
-                txtHotkey.Text = _selectedKey.ToString();
-                _isCapturingHotkey = false;
-                return true;
-            }
+            lblHotkeyMessage.Text = hotkeyPicker.ValidationMessage;
+            lblHotkeyMessage.ForeColor = hotkeyPicker.ValidationSeverity == "error"
+                ? DarkTheme.Error
+                : Color.FromArgb(0xFF, 0xB9, 0x00); // Warning yellow
+            lblHotkeyMessage.Visible = true;
         }
-        return base.ProcessCmdKey(ref msg, keyData);
+        else
+        {
+            lblHotkeyMessage.Visible = false;
+        }
     }
 
     private async Task TestConnectionAsync()
@@ -216,12 +308,80 @@ public partial class SettingsForm : Form
         _ = TestConnectionAsync();
     }
 
+    private void CmbLanguage_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_isLoading)
+            return;
+    }
+
+    private void CmbMicrophone_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_isLoading)
+            return;
+    }
+
+    private void ChkStartWithWindows_CheckedChanged(object? sender, EventArgs e)
+    {
+        if (_isLoading)
+            return;
+
+        try
+        {
+            if (chkStartWithWindows.Checked)
+                StartupService.Enable();
+            else
+                StartupService.Disable();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            MessageBox.Show(
+                "Cannot modify startup settings. Your system administrator may have restricted this feature.",
+                "Permission Denied",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+            chkStartWithWindows.Checked = StartupService.IsEnabled();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Failed to update startup settings: {ex.Message}",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            chkStartWithWindows.Checked = StartupService.IsEnabled();
+        }
+    }
+
     private void BtnSave_Click(object? sender, EventArgs e)
     {
+        var combo = hotkeyPicker.SelectedCombo ?? HotkeyCombo.Default();
+
+        // Re-validate (in case state changed)
+        var validation = HotkeyValidator.Validate(combo);
+        if (validation.Result == HotkeyValidator.ValidationResult.Reserved)
+        {
+            lblHotkeyMessage.Text = validation.Message ?? "This combination is reserved.";
+            lblHotkeyMessage.ForeColor = DarkTheme.Error;
+            lblHotkeyMessage.Visible = true;
+            return; // Block save
+        }
+
+        // Probe for conflicts using RegisterHotKey
+        if (!ProbeHotkeyConflict(combo))
+        {
+            lblHotkeyMessage.Text = "This hotkey is already in use by another application. Choose a different combination.";
+            lblHotkeyMessage.ForeColor = DarkTheme.Error;
+            lblHotkeyMessage.Visible = true;
+            return; // Block save
+        }
+
         // Update settings
-        _settings.HotkeyKey = _selectedKey;
+        _settings.Hotkey = combo;
         _settings.AzureEndpoint = txtEndpoint.Text.Trim();
         _settings.WhisperDeployment = txtDeployment.Text.Trim();
+        _settings.StartWithWindows = chkStartWithWindows.Checked;
+        _settings.LanguageCode = cmbLanguage.SelectedValue as string;
+        _settings.MicrophoneDeviceNumber = cmbMicrophone.SelectedValue as int?;
 
         // Save settings
         ConfigurationService.Save(_settings);
@@ -242,4 +402,43 @@ public partial class SettingsForm : Form
         this.DialogResult = DialogResult.Cancel;
         this.Close();
     }
+
+    #region RegisterHotKey Conflict Detection
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+    private const uint MOD_ALT = 0x0001;
+    private const uint MOD_CONTROL = 0x0002;
+    private const uint MOD_SHIFT = 0x0004;
+
+    /// <summary>
+    /// Probes whether the hotkey combination is available by temporarily registering it.
+    /// Returns true if available, false if conflicting with another app.
+    /// </summary>
+    private bool ProbeHotkeyConflict(HotkeyCombo combo)
+    {
+        // RegisterHotKey requires at least one modifier for non-F-key/non-special keys
+        // For bare keys (no modifiers), skip probe — low-level hooks don't conflict with RegisterHotKey
+        if (!combo.HasModifiers)
+            return true;
+
+        uint modifiers = 0;
+        if (combo.Ctrl) modifiers |= MOD_CONTROL;
+        if (combo.Alt) modifiers |= MOD_ALT;
+        if (combo.Shift) modifiers |= MOD_SHIFT;
+
+        bool registered = RegisterHotKey(this.Handle, 0x7FFF, modifiers, (uint)combo.Key);
+        if (registered)
+        {
+            UnregisterHotKey(this.Handle, 0x7FFF);
+            return true;
+        }
+        return false;
+    }
+
+    #endregion
 }
