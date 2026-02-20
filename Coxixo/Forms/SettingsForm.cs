@@ -38,7 +38,6 @@ public partial class SettingsForm : Form
     {
         // Form properties
         this.Text = "Coxixo Settings";
-        this.Size = new Size(320, 524);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
